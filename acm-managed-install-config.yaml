@@ -1,0 +1,77 @@
+apiVersion: v1
+metadata:
+  name: 'ocp1'
+baseDomain: redhatkrsa.com
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  replicas: 3
+  platform:
+    vsphere:
+      cpus:  16
+      coresPerSocket:  2
+      memoryMB:  32768
+      osDisk:
+        diskSizeGB: 120
+      zones:
+      - "vmzone1"
+      - "vmzone2"
+compute:
+- hyperthreading: Enabled
+  architecture: amd64
+  name: 'worker'
+  replicas: 0
+  platform:
+    vsphere:
+      cpus:  4
+      coresPerSocket:  2
+      memoryMB:  16384
+      osDisk:
+        diskSizeGB: 120
+      zones:
+      - "vmzone1"
+      - "vmzone2"
+networking:
+  networkType: OVNKubernetes
+  clusterNetwork:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: 10.76.168.0/23
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  vsphere:
+    failureDomains:
+    - name: vmzone1
+      region: region
+      server: vcenter.redhatkrsa.com
+      topology:
+        computeCluster: /Datacenter/host/Cluster
+        datacenter: Datacenter
+        datastore: /Datacenter/datastore/host6nfs
+        networks:
+        - VM Network
+      zone: zone1
+    - name: vmzone2
+      region: region
+      server: vcenter.redhatkrsa.com
+      topology:
+        computeCluster: /Datacenter/host/Cluster2
+        datacenter: Datacenter
+        datastore: /Datacenter/datastore/host6nfs
+        networks:
+        - VM Network
+      zone: zone2
+    vCenter: vcenter.redhatkrsa.com
+    username: administrator@vsphere.local
+    password: fpemgot1!KoreaSateam
+    apiVIP: 10.76.168.103
+    ingressVIP: 10.76.168.104
+    network: 'VM Network'
+    diskType: 'thin'
+publish: External
+pullSecret: "" # skip, hive will inject based on it's secrets
+sshKey: |-
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCcLF8sBfcpr3hxcQlEtID5MdTPzVo6qUniJnC9Umw77bEd2DZhwDHkLOoix8CEl3PrDWYlaicdAcpVCOVk9b5LeMLY4fmZZDbhpbLM1Di0jyvcLDoLWy9P8I6clwyb3U/xuX8oSq2j8hf6949V20aqow1eUEi1kP+nSKJIN+82+GvefWkpdVC/I0xIcjH4M5JyLD8r/B1NjjPBV5tepY5jneJ9YRPjFseEdF5vk1O2lyHTgs6pGXzniAl8qUdPFqc6a+328OWpNGqczvh4AJPX2bA3432mEJdtqE+uMuzTd3HucT/62ZeX6IEkr10dH+8Aoee3gummddQ9Dkb2FarVvzC6Xlgxyrg4/K+Yb/a8o13ht+h/wmADXJeDaMOaHjlG9/uNOaXINkNbTDWYFjA98jzI15WW0MHnDZ/52DmlEGTJxH0OtT/D8RrFsAk4DAd0Yael+XY4sxp1qk23CI6D9cPxNPORb8jyVQ4U11V5qFlQFZ02oS9mMwNkmsnxyR9o25SeB3dMIfY9+2BmnzXoi7cd4hCyMqcd7Ae9+vBuSUh6/QmnavNNt00aYib/pz/V53fhwO4eFddbyQfIl7G5L4hL0aJml8+GhulFlonpKQvp1SdjTF3k0eCsmAsOBVq+9gdmy/+A014Avw2ay58C/z/YnmPfoG7/ZQ/gKY2EjQ== sno1@bastion1.hub.redhatkrsa.com

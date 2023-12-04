@@ -1,0 +1,19 @@
+Navigate to the Flow Collector tab, and click Create FlowCollector. Make the following selections in the form view:
+
+spec.agent.ebpf.Sampling: Specify a sampling size for flows. Lower sampling sizes will have higher impact on resource utilization. For more information, see the "FlowCollector API reference", spec.agent.ebpf.
+
+If you are using Loki, set the following specifications:
+
+spec.loki.enable: Select the check box to enable storing flows in Loki.
+
+spec.loki.url: Since authentication is specified separately, this URL needs to be updated to https://loki-gateway-http.netobserv.svc:8080/api/logs/v1/network. The first part of the URL, "loki", must match the name of your LokiStack.
+
+spec.loki.authToken: Select the FORWARD value.
+
+spec.loki.statusUrl: Set this to https://loki-query-frontend-http.netobserv.svc:3100/. The first part of the URL, "loki", must match the name of your LokiStack.
+
+spec.loki.tls.enable: Select the checkbox to enable TLS.
+
+spec.loki.statusTls: The enable value is false by default.
+
+For the first part of the certificate reference names: loki-gateway-ca-bundle, loki-ca-bundle, and loki-query-frontend-http,loki, must match the name of your LokiStack.

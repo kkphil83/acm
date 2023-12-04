@@ -1,0 +1,92 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: image-stream-config
+  namespace: default
+spec:
+  disabled: false
+  remediationAction: enforce
+  policy-templates:
+# Create PVC
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: create-image-registry-pvc
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: PersistentVolumeClaim
+                apiVersion: v1
+                metadata:
+                  name: image-pvc
+                  namespace: openshift-image-registry
+                  annotations:
+                    volume.beta.kubernetes.io/storage-provisioner: csi.vsphere.vmware.com
+                spec:
+                  accessModes:
+                    - ReadWriteOnce
+                  resources:
+                    requests:
+                      storage: 100Gi
+                  storageClassName: thin-csi
+                  volumeMode: Filesystem
+# Configure image config
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: config-image-config
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: imageregistry.operator.openshift.io/v1
+                kind: Config
+                metadata:
+                  name: cluster
+                spec:
+                  logLevel: Normal
+                  rolloutStrategy: Recreate
+                  operatorLogLevel: Normal
+                  managementState: Managed
+                  storage:
+                    managementState: Unmanaged
+                    pvc:
+                      claim: image-pvc
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: image-stream-config-placement
+  namespace: default
+spec:
+  clusterSets:
+    - default
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: environment
+              operator: In
+              values:
+                - dev
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: image-stream-config-placement
+  namespace: default
+placementRef:
+  name: image-stream-config-placement
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+subjects:
+  - name: image-stream-config
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy

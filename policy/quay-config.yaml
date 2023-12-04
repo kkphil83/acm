@@ -1,0 +1,190 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: quay-config
+  namespace: default
+spec:
+  disabled: false
+  remediationAction: enforce
+  policy-templates:
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: create-secret
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Secret
+                apiVersion: v1
+                metadata:
+                  name: pull-secret
+                  namespace: openshift-config
+                data:
+                  .dockerconfigjson: ewogICJhdXRocyI6IHsKICAgICJjbG91ZC5vcGVuc2hpZnQuY29tIjogewogICAgICAiYXV0aCI6ICJiM0JsYm5Ob2FXWjBMWEpsYkdWaGMyVXRaR1YySzNKb2JuTjFjSEJ2Y25Sb2VXOTFNWE5oT1c5bWQyZDJjVFZ6Tm5waVpXYzFjSEJ3TXpOemRuQnVPbFpFUlVwQ1QwMUdTa05YVVVjeVNrMHlXRUZHTkRKWVMwTlhVVXBYT1VWUFYxbzRNVEkzTms0NVVFbFZUMFl6VVZSTFUxaFBUVUV3TVZNeVNVcFhXRVE9IiwKICAgICAgImVtYWlsIjogImh5b3VAcmVkaGF0LmNvbSIKICAgIH0sCiAgICAicXVheS5pbyI6IHsKICAgICAgImF1dGgiOiAiYjNCbGJuTm9hV1owTFhKbGJHVmhjMlV0WkdWMkszSm9ibk4xY0hCdmNuUm9lVzkxTVhOaE9XOW1kMmQyY1RWek5ucGlaV2MxY0hCd016TnpkbkJ1T2xaRVJVcENUMDFHU2tOWFVVY3lTazB5V0VGR05ESllTME5YVVVwWE9VVlBWMW80TVRJM05rNDVVRWxWVDBZelVWUkxVMWhQVFVFd01WTXlTVXBYV0VRPSIsCiAgICAgICJlbWFpbCI6ICJoeW91QHJlZGhhdC5jb20iCiAgICB9LAogICAgInJlZ2lzdHJ5LmNvbm5lY3QucmVkaGF0LmNvbSI6IHsKICAgICAgImF1dGgiOiAiTlRJNE16Z3lNVEY4ZFdoakxURlRZVGxQUmxkSGRsRTFjelo2WWtWbk5WQndjRE16VTFaUVRqcGxlVXBvWWtkamFVOXBTbE5WZWxWNFRXbEtPUzVsZVVwNlpGZEphVTlwU1RCWmVrNXNUVlJKTUZwVVFtcFpiVTB3VFdwS2JGbFVTWGhPYlZreVQxZE5NazFxUVRST1IxRXlXV2xLT1M1dlZFdG9MWGgzZFVWdFRVeDFieTEyVDBObVRIUndia3ByUWxCVFZtMXhkVXRaVUVSWVQzbG5kWGRtTUhWZldVMVZUV2xoY0RVNWJ6UjVMVkZoWW10aFVsOUpWVGhXYVRGcWVIbzBRbXBUT1hGaU5HazRTMk5OWXpWRGIwYzRTREppWTBWblYwSldOREZYY1ROU2NHaGZTekExV21kUFdEUmhhRkpSVTFOSU4yTkdZVXQ1ZDNsMGVXOUxXVTl0UkVWWlRrWnliR2RyWmpocFVuRjNaak4wV25wRllUVTNkV2RPVFRRMWFqWllVemxxWkhoWVIySmFiMnBHV0dkc1VIWjVUMXBITWpJM2VIWm9Na1I2Yms1V2RtWXdNVkUzTVhCbGNWOWFVM1ZFWW1wWVlrRktRM0UzTFVSSU1uaGFZa016WlhCTU9IQm5OMVI0WkRsclNGWnVlazlXU0hKdFJuUXpVRFZ5ZUVWUVRIaEVjVWxwUVZsVVFtRTVMWEp3T1dwd2RIbDVhMVZvWVcxdmJFaFNZVzUwTWtoRVowVmFjMGxpZERWamNGZzRZVEV0WVZOc1QyTmFRVUYyUjFGUmFtMVpWMUZEVHpSWlJGaHBXWGxJTlVOVk1XWTFabkZpVWt4dmEwTnBlWFV0VkhORFRFOVRkVTlxUm5ONlozVlliekl6YVU1UVVWbERNbXRmV1dGSldFTkJhMVZWWW5WSVFtNUxjVWhQUVhWc2ExTnZSazF1YW5selUwbDZTbVpXTVhkdmNGcE1NMDUwYkZWU1ZubHNlazVmYlZKcFdWSkpjbXhsWkhSQ04wMVZkeTFUYjJkck1scFNMWFV5UkVGSFRFSXhTbWQ2WkZRdGVGOXFablJwV1ZwWmMwbEVUVWsyVldsR2IwSjNaalZMYVdaeWNYVlRZa2xxVVdSUGRDMDFNRXc1VmpRM1pHWjZNM3B4Y0RkME9VTmZTRUZ6TFRaQmJWTnZWSGRFVFc5TWNXSlZUVzVWZWpsSGJWZEVkazE1ZUhsQ1oxVTVOVGxVWDJSYVRtaEtWM3BRVUhsUlIySnVNRTloZVhSeE5FcG5ZakJWYzNKRWRUSXRZMlJ3YW5CTFEyTm1SblpCYWw5M1JFOW9kbGt4WWtWTlNEbFhXa1I0V1RoeVkzTlZjR0oyTUdoTE5qSnJZVWN0TjBwNlJHZFZRakZ1WkdSV09XWXlZbVZIYXc9PSIsCiAgICAgICJlbWFpbCI6ICJoeW91QHJlZGhhdC5jb20iCiAgICB9LAogICAgInJlZ2lzdHJ5LnJlZGhhdC5pbyI6IHsKICAgICAgImF1dGgiOiAiTlRJNE16Z3lNVEY4ZFdoakxURlRZVGxQUmxkSGRsRTFjelo2WWtWbk5WQndjRE16VTFaUVRqcGxlVXBvWWtkamFVOXBTbE5WZWxWNFRXbEtPUzVsZVVwNlpGZEphVTlwU1RCWmVrNXNUVlJKTUZwVVFtcFpiVTB3VFdwS2JGbFVTWGhPYlZreVQxZE5NazFxUVRST1IxRXlXV2xLT1M1dlZFdG9MWGgzZFVWdFRVeDFieTEyVDBObVRIUndia3ByUWxCVFZtMXhkVXRaVUVSWVQzbG5kWGRtTUhWZldVMVZUV2xoY0RVNWJ6UjVMVkZoWW10aFVsOUpWVGhXYVRGcWVIbzBRbXBUT1hGaU5HazRTMk5OWXpWRGIwYzRTREppWTBWblYwSldOREZYY1ROU2NHaGZTekExV21kUFdEUmhhRkpSVTFOSU4yTkdZVXQ1ZDNsMGVXOUxXVTl0UkVWWlRrWnliR2RyWmpocFVuRjNaak4wV25wRllUVTNkV2RPVFRRMWFqWllVemxxWkhoWVIySmFiMnBHV0dkc1VIWjVUMXBITWpJM2VIWm9Na1I2Yms1V2RtWXdNVkUzTVhCbGNWOWFVM1ZFWW1wWVlrRktRM0UzTFVSSU1uaGFZa016WlhCTU9IQm5OMVI0WkRsclNGWnVlazlXU0hKdFJuUXpVRFZ5ZUVWUVRIaEVjVWxwUVZsVVFtRTVMWEp3T1dwd2RIbDVhMVZvWVcxdmJFaFNZVzUwTWtoRVowVmFjMGxpZERWamNGZzRZVEV0WVZOc1QyTmFRVUYyUjFGUmFtMVpWMUZEVHpSWlJGaHBXWGxJTlVOVk1XWTFabkZpVWt4dmEwTnBlWFV0VkhORFRFOVRkVTlxUm5ONlozVlliekl6YVU1UVVWbERNbXRmV1dGSldFTkJhMVZWWW5WSVFtNUxjVWhQUVhWc2ExTnZSazF1YW5selUwbDZTbVpXTVhkdmNGcE1NMDUwYkZWU1ZubHNlazVmYlZKcFdWSkpjbXhsWkhSQ04wMVZkeTFUYjJkck1scFNMWFV5UkVGSFRFSXhTbWQ2WkZRdGVGOXFablJwV1ZwWmMwbEVUVWsyVldsR2IwSjNaalZMYVdaeWNYVlRZa2xxVVdSUGRDMDFNRXc1VmpRM1pHWjZNM3B4Y0RkME9VTmZTRUZ6TFRaQmJWTnZWSGRFVFc5TWNXSlZUVzVWZWpsSGJWZEVkazE1ZUhsQ1oxVTVOVGxVWDJSYVRtaEtWM3BRVUhsUlIySnVNRTloZVhSeE5FcG5ZakJWYzNKRWRUSXRZMlJ3YW5CTFEyTm1SblpCYWw5M1JFOW9kbGt4WWtWTlNEbFhXa1I0V1RoeVkzTlZjR0oyTUdoTE5qSnJZVWN0TjBwNlJHZFZRakZ1WkdSV09XWXlZbVZIYXc9PSIsCiAgICAgICJlbWFpbCI6ICJoeW91QHJlZGhhdC5jb20iCiAgICB9LAogICAgImluaXQtcXVheS5odWIucmVkaGF0a3JzYS5jb206ODQ0MyI6IHsKICAgICAgImF1dGgiOiAiWVdSdGFXNDZjak5rYURSME1TRT0iCiAgICB9CiAgfQp9Cg==
+                type: kubernetes.io/dockerconfigjson
+          pruneObjectBehavior: DeleteAll
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: registry-cas-quay
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: registry-cas
+                  namespace: openshift-config
+                data:
+                  init-quay.hub.redhatkrsa.com..8443: >
+                    -----BEGIN CERTIFICATE-----
+
+                    MIIDazCCAlOgAwIBAgIUWinmfp+T14LOg3c9ooRTSw3V7RswDQYJKoZIhvcNAQEL
+
+                    BQAwdjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAlZBMREwDwYDVQQHDAhOZXcgWW9y
+
+                    azENMAsGA1UECgwEUXVheTERMA8GA1UECwwIRGl2aXNpb24xJTAjBgNVBAMMHGlu
+
+                    aXQtcXVheS5odWIucmVkaGF0a3JzYS5jb20wHhcNMjMxMDE4MDE1NDE1WhcNMjQx
+
+                    MDA4MDE1NDE1WjAaMRgwFgYDVQQDDA9xdWF5LWVudGVycHJpc2UwggEiMA0GCSqG
+
+                    SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDb9vNtgbWNHYNv0kT3FR7mtIbgjs85OFse
+
+                    6we4te79dTJH6KGLbKAyOCmZvW/ENqCEJbSpWZkIsCseWJGUHV1HNdohAfvVNnCT
+
+                    glhU8aZlLSQ9J3aKDCGSF1LGcSh/Kv5XLleR6nuS6mEFm/7Dos/V4BBxyWARjQ0o
+
+                    UCtD9yYXLMqLikBuHk8ncAuD0I7hexUgCsJHJC5jxAMOxVC8Sm1D6TW/i3XogXbl
+
+                    i/SvFuRhbuGsAVeZWdpUsrDEUCJwJ5kUqXOVjEHSw89Sp0mygKddq7iXkUHAtBhY
+
+                    W4HohctSmUMi4smLbqc3FXHp7rYMLbpe8cfIKYgGRKPQGDJ8Y6+1AgMBAAGjTTBL
+
+                    MAsGA1UdDwQEAwIC5DATBgNVHSUEDDAKBggrBgEFBQcDATAnBgNVHREEIDAeghxp
+
+                    bml0LXF1YXkuaHViLnJlZGhhdGtyc2EuY29tMA0GCSqGSIb3DQEBCwUAA4IBAQBO
+
+                    rXSUom1Zg/eN6lkuxqbfVUPumF3zPZZfThKmp2a2TMRef642C6tDN8ZZZymkH9Cb
+
+                    Fe9YTLf9NvNzFTE3Jp83fNM0qqD54IV//vU9LmTmvWU2K3zk1O0hN0X1IQnfQyQP
+
+                    LejVupIoALtMucQ1onyxESY0SgyRSECUViiMpS5J4lSnwnPEWe6RTPe8HOC5lc2A
+
+                    SS+xV5ZUB84K4hECWArYY45c+JkV0+MpOW2mcOfvBkKGSGjGFYs/2LptEIxWA8MD
+
+                    gBs843nnXuB4x8ML5NrjKOWioboPz3dauid9TTpTxJJVL+XokSStbR2aioIb4FB5
+
+                    cEb596ytYn5T8iVEIU27
+
+                    -----END CERTIFICATE-----
+
+                    -----BEGIN CERTIFICATE-----
+
+                    MIID2zCCAsOgAwIBAgIUF/uVgsib/Ag+5kGQfmbpoBBzXqswDQYJKoZIhvcNAQEL
+
+                    BQAwdjELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAlZBMREwDwYDVQQHDAhOZXcgWW9y
+
+                    azENMAsGA1UECgwEUXVheTERMA8GA1UECwwIRGl2aXNpb24xJTAjBgNVBAMMHGlu
+
+                    aXQtcXVheS5odWIucmVkaGF0a3JzYS5jb20wHhcNMjMxMDE4MDE1NDEzWhcNMjYw
+
+                    ODA3MDE1NDEzWjB2MQswCQYDVQQGEwJVUzELMAkGA1UECAwCVkExETAPBgNVBAcM
+
+                    CE5ldyBZb3JrMQ0wCwYDVQQKDARRdWF5MREwDwYDVQQLDAhEaXZpc2lvbjElMCMG
+
+                    A1UEAwwcaW5pdC1xdWF5Lmh1Yi5yZWRoYXRrcnNhLmNvbTCCASIwDQYJKoZIhvcN
+
+                    AQEBBQADggEPADCCAQoCggEBAMupp/nzoKztAfawYIC63WLnEFj8YR2zRYRcEzPB
+
+                    NOEthIV8JaOxcziAizTryC+Mv8Ufwn4rMtsvoTVcndCt978H2g7dZCpGWVYvtUQD
+
+                    nSmPqSpu0Cok3JbvzCGkUqAKBjVpTKRHQGJGJcOSYCKVGX21Dczv44m95co4wHJN
+
+                    JKKyIt14NiYlNgML0SacAUB9jpnh0obiZfYLGBvGZyzxN3mNw2agIfSmxD5NrTwZ
+
+                    PNHp+b/mEgkv1G/W23dMjij1HTTKYmvjJFFNk/SOC3PYRYOJdjvdEP0NP5lfj0dl
+
+                    TvaadRKkRHqMqirW1mbAmRMyHK57Ps/vN5nsj/9iIKMxRecCAwEAAaNhMF8wCwYD
+
+                    VR0PBAQDAgLkMBMGA1UdJQQMMAoGCCsGAQUFBwMBMCcGA1UdEQQgMB6CHGluaXQt
+
+                    cXVheS5odWIucmVkaGF0a3JzYS5jb20wEgYDVR0TAQH/BAgwBgEB/wIBATANBgkq
+
+                    hkiG9w0BAQsFAAOCAQEAKXnKuQ2hqjmA9RwoPdIGfeW4shjEcr6Z9FZZ9vx7G8K5
+
+                    E6QjveUlldXm1FWknKDoT7BoiOb76yXsfYNZmuOWyiC9QqRTTZJU5W+DjCZY23aw
+
+                    n1XT7TfrmgPL/xBU3qe5DuN94d6JMlyasutQ3FrQtkWR838WhVRmkfXQM7XwczgC
+
+                    q/wsAtv3q4H5wcSNr++aDhMUSGJXpuaB0Txu5dQSNhK9uIFB/DltAO8ldB4n/W+4
+
+                    PvEoW5XFXpdQ6F8xIA37VPQCiVgLc9hWejfmvj0U6ZiV8d0151OWhZ4/3w2o+m4r
+
+                    5HR3dxchXQ9xowqR3NL5IPqXCXDWHRtOL8BD3DmEKw==
+
+                    -----END CERTIFICATE-----
+          pruneObjectBehavior: DeleteAll
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: registry-cas-quay
+        spec:
+          remediationAction: inform
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: config.openshift.io/v1
+                kind: Image
+                metadata:
+                  name: cluster
+                  annotations:
+                    include.release.openshift.io/ibm-cloud-managed: "true"
+                    include.release.openshift.io/self-managed-high-availability: "true"
+                    include.release.openshift.io/single-node-developer: "true"
+                    release.openshift.io/create-only: "true"
+                spec:
+                  additionalTrustedCA:
+                    name: registry-cas
+          pruneObjectBehavior: None
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: quay-config-placement
+  namespace: default
+spec:
+  clusterSets:
+    - default
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: environment
+              operator: In
+              values:
+                - dev
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: quay-config-placement
+  namespace: default
+placementRef:
+  name: quay-config-placement
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+subjects:
+  - name: quay-config
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy

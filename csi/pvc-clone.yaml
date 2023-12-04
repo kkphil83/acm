@@ -1,0 +1,21 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: httpd-pvc-clone
+  namespace: httpd
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: thin-csi
+  volumeMode: Filesystem
+  dataSource:
+    apiGroup: ''
+    kind: PersistentVolumeClaim
+    name: httpd-pvc
+  dataSourceRef:
+    apiGroup: ''
+    kind: PersistentVolumeClaim
+    name: httpd-pvc

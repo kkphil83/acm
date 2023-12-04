@@ -1,0 +1,133 @@
+additionalTrustBundlePolicy: Proxyonly
+featureSet: TechPreviewNoUpgrade
+apiVersion: v1
+baseDomain: redhatkrsa.com
+compute:
+- architecture: amd64
+  hyperthreading: Enabled
+  name: worker
+  platform: 
+    vsphere:
+      coresPerSocket: 2
+      cpus: 24
+      memoryMB: 32768
+      osDisk:
+        diskSizeGB: 300
+      zones:
+      - "vmzone1"
+      - "vmzone2"
+  replicas: 3
+controlPlane:
+  architecture: amd64
+  hyperthreading: Enabled
+  name: master
+  platform:
+    vsphere:
+      coresPerSocket: 2
+      cpus: 32
+      memoryMB: 65536
+      osDisk:
+        diskSizeGB: 300
+      zones:
+      - "vmzone1"
+      - "vmzone2"
+  replicas: 3
+metadata:
+  name: hub
+networking:
+  clusterNetwork:
+  - cidr: 10.128.0.0/14
+    hostPrefix: 23
+  machineNetwork:
+  - cidr: 10.76.168.0/23
+  networkType: OVNKubernetes
+  serviceNetwork:
+  - 172.30.0.0/16
+platform:
+  vsphere:
+    failureDomains:
+    - name: vmzone1
+      region: region
+      server: vcenter.redhatkrsa.com
+      topology:
+        computeCluster: /Datacenter/host/Cluster
+        datacenter: Datacenter
+        datastore: /Datacenter/datastore/host5nfs
+        networks:
+        - VM Network
+      zone: zone1
+    - name: vmzone2
+      region: region
+      server: vcenter.redhatkrsa.com
+      topology:
+        computeCluster: /Datacenter/host/Cluster2
+        datacenter: Datacenter
+        datastore: /Datacenter/datastore/host5nfs
+        networks:
+        - VM Network
+      zone: zone2
+    vcenters:
+    - datacenters:
+      - Datacenter
+      password: fpemgot1!KoreaSateam
+      port: 443
+      server: vcenter.redhatkrsa.com
+      user: administrator@vsphere.local
+    apiVIPs:
+    - 10.76.168.101
+    ingressVIPs:
+    - 10.76.168.102
+    hosts:
+    - role: bootstrap
+      networkDevice:
+        ipAddrs:
+        - 10.76.168.210/23
+        gateway: 10.76.169.254
+        nameservers:
+        - 10.76.168.7
+    - role: control-plane
+      networkDevice:
+        ipAddrs:
+        - 10.76.168.211/23
+        gateway: 10.76.169.254
+        nameservers:
+        - 10.76.168.7
+    - role: control-plane
+      networkDevice:
+        ipAddrs:
+        - 10.76.168.212/23
+        gateway: 10.76.169.254
+        nameservers:
+        - 10.76.168.7
+    - role: control-plane
+      networkDevice:
+        ipAddrs:
+        - 10.76.168.213/23
+        gateway: 10.76.169.254
+        nameservers:
+        - 10.76.168.7
+    - role: compute
+      networkDevice:
+        ipAddrs:
+        - 10.76.168.214/23
+        gateway: 10.76.169.254
+        nameservers:
+        - 10.76.168.7
+    - role: compute
+      networkDevice:
+        ipAddrs:
+        - 10.76.168.215/23
+        gateway: 10.76.169.254
+        nameservers:
+        - 10.76.168.7
+    - role: compute
+      networkDevice:
+        ipAddrs:
+        - 10.76.168.216/23
+        gateway: 10.76.169.254
+        nameservers:
+        - 10.76.168.7
+publish: External
+pullSecret: '{"auths":{"cloud.openshift.com":{"auth":"b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K3JobnN1cHBvcnRoeW91MXNhOW9md2d2cTVzNnpiZWc1cHBwMzNzdnBuOlZERUpCT01GSkNXUUcySk0yWEFGNDJYS0NXUUpXOUVPV1o4MTI3Nk45UElVT0YzUVRLU1hPTUEwMVMySUpXWEQ=","email":"hyou@redhat.com"},"quay.io":{"auth":"b3BlbnNoaWZ0LXJlbGVhc2UtZGV2K3JobnN1cHBvcnRoeW91MXNhOW9md2d2cTVzNnpiZWc1cHBwMzNzdnBuOlZERUpCT01GSkNXUUcySk0yWEFGNDJYS0NXUUpXOUVPV1o4MTI3Nk45UElVT0YzUVRLU1hPTUEwMVMySUpXWEQ=","email":"hyou@redhat.com"},"registry.connect.redhat.com":{"auth":"NTI4MzgyMTF8dWhjLTFTYTlPRldHdlE1czZ6YkVnNVBwcDMzU1ZQTjpleUpoYkdjaU9pSlNVelV4TWlKOS5leUp6ZFdJaU9pSTBZek5sTVRJMFpUQmpZbU0wTWpKbFlUSXhObVkyT1dNMk1qQTROR1EyWWlKOS5vVEtoLXh3dUVtTUx1by12T0NmTHRwbkprQlBTVm1xdUtZUERYT3lndXdmMHVfWU1VTWlhcDU5bzR5LVFhYmthUl9JVThWaTFqeHo0QmpTOXFiNGk4S2NNYzVDb0c4SDJiY0VnV0JWNDFXcTNScGhfSzA1WmdPWDRhaFJRU1NIN2NGYUt5d3l0eW9LWU9tREVZTkZybGdrZjhpUnF3ZjN0WnpFYTU3dWdOTTQ1ajZYUzlqZHhYR2Jab2pGWGdsUHZ5T1pHMjI3eHZoMkR6bk5WdmYwMVE3MXBlcV9aU3VEYmpYYkFKQ3E3LURIMnhaYkMzZXBMOHBnN1R4ZDlrSFZuek9WSHJtRnQzUDVyeEVQTHhEcUlpQVlUQmE5LXJwOWpwdHl5a1VoYW1vbEhSYW50MkhEZ0Vac0lidDVjcFg4YTEtYVNsT2NaQUF2R1FRam1ZV1FDTzRZRFhpWXlINUNVMWY1ZnFiUkxva0NpeXUtVHNDTE9TdU9qRnN6Z3VYbzIzaU5QUVlDMmtfWWFJWENBa1VVYnVIQm5LcUhPQXVsa1NvRk1uanlzU0l6SmZWMXdvcFpMM050bFVSVnlsek5fbVJpWVJJcmxlZHRCN01Vdy1Tb2drMlpSLXUyREFHTEIxSmd6ZFQteF9qZnRpWVpZc0lETUk2VWlGb0J3ZjVLaWZycXVTYklqUWRPdC01MEw5VjQ3ZGZ6M3pxcDd0OUNfSEFzLTZBbVNvVHdETW9McWJVTW5VejlHbVdEdk15eHlCZ1U5NTlUX2RaTmhKV3pQUHlRR2JuME9heXRxNEpnYjBVc3JEdTItY2RwanBLQ2NmRnZBal93RE9odlkxYkVNSDlXWkR4WThyY3NVcGJ2MGhLNjJrYUctN0p6RGdVQjFuZGRWOWYyYmVHaw==","email":"hyou@redhat.com"},"registry.redhat.io":{"auth":"NTI4MzgyMTF8dWhjLTFTYTlPRldHdlE1czZ6YkVnNVBwcDMzU1ZQTjpleUpoYkdjaU9pSlNVelV4TWlKOS5leUp6ZFdJaU9pSTBZek5sTVRJMFpUQmpZbU0wTWpKbFlUSXhObVkyT1dNMk1qQTROR1EyWWlKOS5vVEtoLXh3dUVtTUx1by12T0NmTHRwbkprQlBTVm1xdUtZUERYT3lndXdmMHVfWU1VTWlhcDU5bzR5LVFhYmthUl9JVThWaTFqeHo0QmpTOXFiNGk4S2NNYzVDb0c4SDJiY0VnV0JWNDFXcTNScGhfSzA1WmdPWDRhaFJRU1NIN2NGYUt5d3l0eW9LWU9tREVZTkZybGdrZjhpUnF3ZjN0WnpFYTU3dWdOTTQ1ajZYUzlqZHhYR2Jab2pGWGdsUHZ5T1pHMjI3eHZoMkR6bk5WdmYwMVE3MXBlcV9aU3VEYmpYYkFKQ3E3LURIMnhaYkMzZXBMOHBnN1R4ZDlrSFZuek9WSHJtRnQzUDVyeEVQTHhEcUlpQVlUQmE5LXJwOWpwdHl5a1VoYW1vbEhSYW50MkhEZ0Vac0lidDVjcFg4YTEtYVNsT2NaQUF2R1FRam1ZV1FDTzRZRFhpWXlINUNVMWY1ZnFiUkxva0NpeXUtVHNDTE9TdU9qRnN6Z3VYbzIzaU5QUVlDMmtfWWFJWENBa1VVYnVIQm5LcUhPQXVsa1NvRk1uanlzU0l6SmZWMXdvcFpMM050bFVSVnlsek5fbVJpWVJJcmxlZHRCN01Vdy1Tb2drMlpSLXUyREFHTEIxSmd6ZFQteF9qZnRpWVpZc0lETUk2VWlGb0J3ZjVLaWZycXVTYklqUWRPdC01MEw5VjQ3ZGZ6M3pxcDd0OUNfSEFzLTZBbVNvVHdETW9McWJVTW5VejlHbVdEdk15eHlCZ1U5NTlUX2RaTmhKV3pQUHlRR2JuME9heXRxNEpnYjBVc3JEdTItY2RwanBLQ2NmRnZBal93RE9odlkxYkVNSDlXWkR4WThyY3NVcGJ2MGhLNjJrYUctN0p6RGdVQjFuZGRWOWYyYmVHaw==","email":"hyou@redhat.com"}}}'
+sshKey: |
+  ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCnvPIy6pM/wQyvj2BQ00n4sN+rQGLm2MCQrieUW+M9o8wT2Q9AzLjKyA87ZjNRCAOEF7yvydQsuvwyCRMxPP9SBdznWq+vj7fubducDqXs5soERg+5K8Y0sgx4GA/7x/F6cMjiL/kTTDqVvJX+1mXbq/9T4mDogFIZQlMPhGrj7xShbyJ1XLxbmsiKIca4roukSkmU/re/YPtUC2WtmUCabYESUJ6wHD4lCSXzgRyKsd6M+tagU0Rf242IRcLBvfwVzUdvPoB/Sc+Zr95frxXJLJa+BZRma4BgRYYO7I92qagYFjPneRZVQgPL8l46EIizq8iNJMHErYElLkQT5cYQ+NwLhGovJa4qKvl0IOWDqiuTJ3qakFpXtuB/8MsXsci6jarcsZbU6w3V4ncpwbNo56ZW/4em5n3B7PINbieCnOeIt0xLvQm4YudzoANl07CkrlWHVm/8Nxkk/Tho8NEHfg4PMXCxevIy1kQF3zjjaomTU71OpOYzqmL1PALfL80ykFE+KKRN04o7lvnmv8X+I8vtfb1gx5odslp3qvdUlmpkeDN4DRnlWeicoO5AeI2wlw5DzbtWvjBTso0VQHK5klAi4LWwct2n2zYS4NlnrYhe/bwik35iPZS4jG0S46JsQK3R70dVh08WfuPeL5BzmeoBycRyLUSxIzctW+baMw== root@bastion1.hub.redhatkrsa.com

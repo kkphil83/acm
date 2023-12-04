@@ -1,0 +1,194 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: oauth-config
+  namespace: default
+spec:
+  disabled: false
+  remediationAction: enforce
+  policy-templates:
+# Create secret, ca comfigmap 
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: create-idp-openid-secret
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: Secret
+                apiVersion: v1
+                metadata:
+                  name: idp-openid-secret
+                  namespace: openshift-config
+                data:
+                  clientSecret: Q1hpeVFXbXd4dXIzU0wxQlAzelk1RXl0VW53b2lhWUM=
+                type: Opaque
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: create-openid-sso-ca-configmap
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: ConfigMap
+                apiVersion: v1
+                metadata:
+                  name: openid-sso-ca
+                  namespace: openshift-config
+                data:
+                  ca.crt: |-
+                    -----BEGIN CERTIFICATE-----
+                    MIIDDDCCAfSgAwIBAgIBATANBgkqhkiG9w0BAQsFADAmMSQwIgYDVQQDDBtpbmdy
+                    ZXNzLW9wZXJhdG9yQDE2OTg5MzA0MzYwHhcNMjMxMTAyMTMwNzE1WhcNMjUxMTAx
+                    MTMwNzE2WjAmMSQwIgYDVQQDDBtpbmdyZXNzLW9wZXJhdG9yQDE2OTg5MzA0MzYw
+                    ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDCGltRf2elwJgOk5E5p+PF
+                    zAWGL8h5JpFsATrYVKx2TESyytatyHTttNMd6ydFHTnqwBXO9bILCrcr6Ju4oTDe
+                    5iPFIcuWnZafREakVlNl0JdveE8jb6sIMdwbSk19Ix7IKhCAch5iIVioqvwMTqlv
+                    8SQd7l5nM+uH3QjJQjbmMEoca2YUz4KXLzv8tNwfELir9RId+qLO/5ksqK9uWXtb
+                    lqqiB974pJYg9GncROCYVZorJN4a8LdN/KqcAt4nTKbgPqfcruAfPX6YsO0pfjH+
+                    vhEq/yohwo6EV97104RyKzRGStlfVPnladao04fGfZERsq/pToplOQ7NnoKWDlbv
+                    AgMBAAGjRTBDMA4GA1UdDwEB/wQEAwICpDASBgNVHRMBAf8ECDAGAQH/AgEAMB0G
+                    A1UdDgQWBBTM7Q38U9sOCCd0Ol1X0t5ghi1IHzANBgkqhkiG9w0BAQsFAAOCAQEA
+                    qI9D75yzHCjl491KMZM3jtBdSAb2CK1qHNPMrg0zUcaT8OKGNCXHtZnvFxvSpnfv
+                    7MIUwO/sw1+eSR+1u3H2U9wAAAmHsOOiTLezCIqmSO9NzmCfjkTCNzSN7zfsC2XU
+                    3qovfYUYbcuHAfartamgl159qHuiNFmhBrqlJ/OlZnEIrmJwlBXn4cCv0wkip/2I
+                    YBE2nPZ0ZVEG6oZW20lPCuIPUu9ieIbqMCV+5rBGW0e45U7NvbQpYuH1awhqUOX/
+                    6RNl4iTd2XKVHI52A9aDmjnsrXC7pDTr7k8FvIXnmueqUirYlJzeDUdLpjyRgchz
+                    b3sAynEb0HtsYFmaZ3Bu3w==
+                    -----END CERTIFICATE-----
+# Configure OAuth
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: config-oauth
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: config.openshift.io/v1
+                kind: OAuth
+                metadata:
+                  name: cluster
+                spec:
+                  identityProviders:
+                    - mappingMethod: claim
+                      name: openid
+                      openID:
+                        ca:
+                          name: openid-sso-ca
+                        claims:
+                          email:
+                            - email
+                          name:
+                            - name
+                          preferredUsername:
+                            - preferred_username
+                        clientID: sso
+                        clientSecret:
+                          name: idp-openid-secret
+                        extraScopes: []
+                        issuer: 'https://keycloak-rhsso.apps.hub.redhatkrsa.com/auth/realms/openshift'
+                      type: OpenID
+# Create ClusterRollBinding for kadmin, kmon
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: cluster-admin-kadmin
+        spec:
+          remediationAction: inform  # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: cluster-admin-kadmin
+                subjects:
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: kadmin
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: cluster-admin
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: view-kmon
+        spec:
+          remediationAction: inform  # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                kind: ClusterRoleBinding
+                apiVersion: rbac.authorization.k8s.io/v1
+                metadata:
+                  name: view-kmon
+                subjects:
+                  - kind: User
+                    apiGroup: rbac.authorization.k8s.io
+                    name: kmon
+                roleRef:
+                  apiGroup: rbac.authorization.k8s.io
+                  kind: ClusterRole
+                  name: view
+# Delete kubeadmin
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: delete-kubeadmin
+        spec:
+          remediationAction: inform  # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: mustnothave
+              objectDefinition:
+                kind: Secret
+                apiVersion: v1
+                metadata:
+                  name: kubeadmin
+                  namespace: kube-system
+                data:
+                  kubeadmin: >-
+                    JDJhJDEwJFpTRHFuR05BQi5LMy50aVNGZEJuSS5hLlpyY0NubUxCbXFBQi5IR3IzeTdQMEd4bmsuM3Q2
+                type: Opaque
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: oauth-config-placement
+  namespace: default
+spec:
+  clusterSets:
+    - default
+  predicates: []
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: oauth-config-placement
+  namespace: default
+placementRef:
+  name: oauth-config-placement
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+subjects:
+  - name: oauth-config
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy

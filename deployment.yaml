@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: podo-web-portal
+  labels:
+    app: podo-web-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: podo-web-portal
+  template:
+    metadata:
+      labels:
+        app: podo-web-portal
+    spec:
+      containers:
+      - name: podo-web-portal
+        image: aidentyx.azurecr.io/podo-web-portal:1.1.3337_2178bcc
+        env:
+        - name: DEMO_GREETING
+          value: "Hello from the environment"
+        - name: DEMO_FAREWELL
+          value: "Such a sweet sorrow"
+        ports:
+        - containerPort: 30000
+        volumeMounts:
+          - name: html
+            mountPath: /usr/share/nginx/html
+          - name: conf
+            mountPath: /etc/nginx/template
+      volumes:
+        - name: html
+          persistentVolumeClaim:
+            claimName: podo-web-portal-html
+        - name: conf
+          persistentVolumeClaim:
+            claimName: podo-web-portal-conf
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: podo-web-portal
+  labels:
+    app: podo-web-portal
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 30000
+    protocol: TCP
+    targetPort: http
+  selector:
+    app: podo-web-portal

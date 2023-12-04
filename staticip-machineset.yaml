@@ -1,0 +1,100 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  annotations:
+    machine.openshift.io/memoryMb: '8192'
+    machine.openshift.io/vCPU: '8'
+  name: ocp14-kj96t-worker-0
+  namespace: openshift-machine-api
+  labels:
+    hive.openshift.io/machine-pool: worker
+    hive.openshift.io/managed: 'true'
+    machine.openshift.io/cluster-api-cluster: ocp14-kj96t
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: ocp14-kj96t
+      machine.openshift.io/cluster-api-machineset: ocp14-kj96t-worker-0
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: ocp14-kj96t
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: ocp14-kj96t-worker-0
+    spec:
+      lifecycleHooks: {}
+      metadata: {}
+      providerSpec:
+        value:
+          numCoresPerSocket: 2
+          diskGiB: 120
+          snapshot: ''
+          userDataSecret:
+            name: worker-user-data
+          memoryMiB: 8192
+          credentialsSecret:
+            name: vsphere-cloud-credentials
+          network:
+            devices:
+              - addressesFromPools:
+                  - group: ipamcontroller.openshift.io
+                    name: static-ci-pool
+                    resource: IPPool
+                nameservers:
+                  - 10.76.168.7
+                networkName: VM Network         
+          metadata:
+            creationTimestamp: null
+          numCPUs: 8
+          kind: VSphereMachineProviderSpec
+          workspace:
+            datacenter: Datacenter
+            datastore: /Datacenter/datastore/host5nfs
+            folder: /Datacenter/vm/ocp14-kj96t
+            resourcePool: /Datacenter/host/Cluster//Resources
+            server: vcenter.redhatkrsa.com
+          template: ocp14-kj96t-rhcos-region-zone1
+          apiVersion: machine.openshift.io/v1beta1
+
+
+
+
+
+apiVersion: ipam.cluster.x-k8s.io/v1alpha1
+kind: IPAddress
+metadata:
+  name: 10-76-168-196
+  namespace: openshift-machine-api
+spec:
+  address: 10.76.168.196
+  claimRef:
+    name: ocp14-kj96t-worker-0-7tdts-claim-0-0
+  gateway: 10.76.169.254
+  poolRef:
+    apiGroup: ipamcontroller.openshift.io
+    kind: IPPool
+    name: static-ci-pool
+  prefix: 23
+
+apiVersion: ipam.cluster.x-k8s.io/v1alpha1
+kind: IPAddress
+metadata:
+  name: 10-76-168-197
+  namespace: openshift-machine-api
+spec:
+  address: 10.76.168.197
+  claimRef:
+    name: ocp14-kj96t-worker-0-vdfw2-claim-0-0 
+  gateway: 10.76.169.254
+  poolRef:
+    apiGroup: ipamcontroller.openshift.io
+    kind: IPPool
+    name: static-ci-pool
+  prefix: 23
+
+
+oc --type=merge patch IPAddressClaim ocp14-kj96t-worker-0-8jm62-claim-0-0 -p='{"status":{"addressRef": {"name": "10-76-168-196"}}}' -n openshift-machine-api --subresource=status
+
+oc --type=merge patch IPAddressClaim ocp14-kj96t-worker-0-vdfw2-claim-0-0 -p='{"status":{"addressRef": {"name": "ocp14-kj96t-worker-0-vdfw2-claim-ipaddress-0-0"}}}' -n openshift-machine-api --subresource=status

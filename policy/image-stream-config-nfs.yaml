@@ -1,0 +1,116 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: image-stream-config
+  namespace: default
+spec:
+  disabled: false
+  remediationAction: enforce
+  policy-templates:
+# Create PV
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: create-image-registry-pv
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: PersistentVolume
+                metadata:
+                  name: openshift-image-registry-pv
+                spec:
+                  capacity:
+                    storage: 100Gi
+                  accessModes:
+                    - ReadWriteMany
+                  nfs:
+                    server: 10.76.168.100
+                    path: /nfs/storage/{{ fromSecret "open-cluster-management-agent" "hub-kubeconfig-secret" "cluster-name" | base64dec }}
+# Create PVC
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: create-image-registry-pvc
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: PersistentVolumeClaim
+                metadata:
+                  name: openshift-image-registry-pvc
+                  namespace: openshift-image-registry
+                spec:
+                  storageClassName: ""
+                  accessModes:
+                    - ReadWriteMany
+                  resources:
+                    requests:
+                      storage: 100Gi
+                  volumeName: openshift-image-registry-pv
+                  volumeMode: Filesystem
+# Configure image config
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: config-image-config
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: imageregistry.operator.openshift.io/v1
+                kind: Config
+                metadata:
+                  name: cluster
+                spec:
+                  logLevel: Normal
+                  rolloutStrategy: RollingUpdate
+                  operatorLogLevel: Normal
+                  managementState: Managed
+                  storage:
+                    managementState: Unmanaged
+                    pvc:
+                      claim: openshift-image-registry-pvc
+                  replicas: 3
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: image-stream-config-placement
+  namespace: default
+spec:
+  clusterSets:
+    - default
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: environment
+              operator: In
+              values:
+                - dev
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: image-stream-config-placement
+  namespace: default
+placementRef:
+  name: image-stream-config-placement
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+subjects:
+  - name: image-stream-config
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy

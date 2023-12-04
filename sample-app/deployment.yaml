@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-sample
+  labels:
+    app: httpd-sample
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: httpd-sample
+  template:
+    metadata:
+      labels:
+        app: httpd-sample
+    spec:
+      containers:
+      - name: httpd
+        image: init-quay.hub.redhatkrsa.com:8443/rhel9/httpd-24:latest
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: httpd
+          subPath: html
+      volumes:
+      - name: httpd
+        persistentVolumeClaim:
+          claimName: httpd-pvc

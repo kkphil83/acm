@@ -1,0 +1,19 @@
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  labels:
+    kubernetes.io/metadata.name: openshift-logging
+  name: openshift-logging
+spec:
+  finalizers:
+  - kubernetes
+---
+apiVersion: project.openshift.io/v1
+kind: Project
+metadata:
+  labels:
+    kubernetes.io/metadata.name: openshift-operators-redhat
+  name: openshift-operators-redhat
+spec:
+  finalizers:
+  - kubernetes

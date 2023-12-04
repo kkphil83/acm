@@ -1,0 +1,225 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: multus-config
+  namespace: default
+spec:
+  disabled: false
+  remediationAction: enforce
+  policy-templates:
+# Create Namespace
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: cni-host-device-project
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: cni-host-device
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: cni-ipvlan-project
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: cni-ipvlan
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: cni-macvlan-project
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: cni-macvlan
+# Create NetworkAttachmentDefinition
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: host-device-main-network
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: k8s.cni.cncf.io/v1
+                kind: NetworkAttachmentDefinition
+                metadata:
+                  name: host-device-main
+                  namespace: cni-host-device
+                spec:
+                  config: '{ "cniVersion": "0.3.1", "name": "host-device-main", "type": "host-device", 
+                    "device": "ens224", "ipam": { "type": "static" } }'
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: ipvlan-main-network
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: k8s.cni.cncf.io/v1
+                kind: NetworkAttachmentDefinition
+                metadata:
+                  name: ipvlan-main
+                  namespace: cni-ipvlan
+                spec:
+                  config: '{ "cniVersion": "0.3.1", "name": "ipvlan-main", "type": "ipvlan",
+                    "mode": "l2", "master": "ens161", "ipam": { "type": "host-local", "subnet":
+                    "10.76.168.0/23", "rangeStart": "10.76.168.210", "rangeEnd": "10.76.168.220",
+                    "gateway": "10.76.169.254" } }'
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: macvlan-main-network
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: k8s.cni.cncf.io/v1
+                kind: NetworkAttachmentDefinition
+                metadata:
+                  name: macvlan-main
+                  namespace: cni-macvlan
+                spec:
+                  config: '{ "cniVersion": "0.3.1", "name": "macvlan-main", "type": "macvlan",
+                    "mode": "bridge", "master": "ens256", "ipam": { "type": "static" } }'
+# Deploy App
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: multus-macvlan-pod
+        spec:
+          remediationAction: inform  # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                  name: multus-macvlan
+                  namespace: cni-macvlan
+                  annotations:
+                    k8s.v1.cni.cncf.io/networks: >-
+                      [ { "name": "macvlan-main", "ips": [ "10.76.168.200/23" ], "gateway": [
+                      "10.76.169.254" ] }]
+                spec:
+                  containers:
+                    - name: rhel
+                      image: registry.access.redhat.com/rhel7/rhel-tools
+                      command: [ "/bin/sh", "-c", "while true ; do date; sleep 10; done;" ]
+                  restartPolicy: Never
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: multus-ipvlan-pod
+        spec:
+          remediationAction: inform  # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                  name: multus-ipvlan
+                  namespace: cni-ipvlan
+                  annotations:
+                    k8s.v1.cni.cncf.io/networks: >-
+                      [ { "name": "ipvlan-main", "ips": [ "10.76.168.212/23" ], "gateway": [
+                      "10.76.169.254" ] }]
+                spec:
+                  containers:
+                    - name: rhel
+                      image: registry.access.redhat.com/rhel7/rhel-tools
+                      command: [ "/bin/sh", "-c", "while true ; do date; sleep 10; done;" ]
+                  restartPolicy: Never
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: multus-host-device-pod
+        spec:
+          remediationAction: inform  # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Pod
+                metadata:
+                  name: multus-host-device
+                  namespace: cni-host-device
+                  annotations:
+                    k8s.v1.cni.cncf.io/networks: >-
+                      [ { "name": "host-device-main", "ips": [ "10.76.168.205/23" ], "gateway": [
+                      "10.76.169.254" ] }]
+                spec:
+                  containers:
+                    - name: rhel
+                      image: registry.access.redhat.com/rhel7/rhel-tools
+                      command: [ "/bin/sh", "-c", "while true ; do date; sleep 10; done;" ]
+                  restartPolicy: Never
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: multus-config-placement
+  namespace: default
+spec:
+  clusterSets:
+    - default
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: environment
+              operator: In
+              values:
+                - dev
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: multus-config-placement
+  namespace: default
+placementRef:
+  name: multus-config-placement
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+subjects:
+  - name: multus-config
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy

@@ -1,0 +1,199 @@
+apiVersion: policy.open-cluster-management.io/v1
+kind: Policy
+metadata:
+  name: openshift-logging-install
+  namespace: default
+spec:
+  disabled: false
+  remediationAction: enforce
+  policy-templates:
+# Create Namespace
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: openshift-logging-project
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: openshift-logging
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: openshift-operators-redhat-project
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: v1
+                kind: Namespace
+                metadata:
+                  name: openshift-operators-redhat
+# Create OperatorGroup
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: openshift-logging-operator-group
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
+                metadata:
+                  name: openshift-logging
+                  namespace: openshift-logging
+                spec:
+                  targetNamespaces:
+                  - openshift-logging
+                  upgradeStrategy: Default
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: openshift-operators-redhat-operator-group
+        spec:
+          remediationAction: inform # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1
+                kind: OperatorGroup
+                metadata:
+                  name: openshift-operators-redhat
+                  namespace: openshift-operators-redhat
+                spec:
+                  upgradeStrategy: Default
+# Create Subscription
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: cluster-logging-subscription
+        spec:
+          remediationAction: inform  # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  labels:
+                    operators.coreos.com/cluster-logging.openshift-logging: ""
+                  name: cluster-logging
+                  namespace: openshift-logging
+                spec:
+                  channel: stable
+                  installPlanApproval: Automatic
+                  name: cluster-logging
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+                  startingCSV: cluster-logging.v5.7.6
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: elasticsearch-operator-subscription
+        spec:
+          remediationAction: inform  # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: operators.coreos.com/v1alpha1
+                kind: Subscription
+                metadata:
+                  labels:
+                    operators.coreos.com/elasticsearch-operator.openshift-operators-redhat: ""
+                  name: elasticsearch-operator
+                  namespace: openshift-operators-redhat
+                spec:
+                  channel: stable
+                  installPlanApproval: Automatic
+                  name: elasticsearch-operator
+                  source: redhat-operators
+                  sourceNamespace: openshift-marketplace
+                  startingCSV: elasticsearch-operator.v5.7.6
+# Create Cluster-Logging Instance
+    - objectDefinition:
+        apiVersion: policy.open-cluster-management.io/v1
+        kind: ConfigurationPolicy
+        metadata:
+          name: deploy-cluster-logging-instance
+        spec:
+          remediationAction: inform  # will be overridden by remediationAction in parent policy
+          severity: high
+          object-templates:
+            - complianceType: musthave
+              objectDefinition:
+                apiVersion: logging.openshift.io/v1
+                kind: ClusterLogging
+                metadata:
+                  name: instance
+                  namespace: openshift-logging
+                spec:
+                  collection:
+                    type: vector
+                  logStore:
+                    elasticsearch:
+                      resources:
+                        requests:
+                          memory: 2Gi
+                      storage:
+                        size: 200G
+                      nodeCount: 3
+                      redundancyPolicy: SingleRedundancy
+                    retentionPolicy:
+                      application:
+                        maxAge: 7d
+                    type: elasticsearch
+                  visualization:
+                    kibana:
+                      replicas: 1
+                    type: kibana
+                  managementState: Managed
+---
+apiVersion: cluster.open-cluster-management.io/v1beta1
+kind: Placement
+metadata:
+  name: openshift-logging-install-placement
+  namespace: default
+spec:
+  clusterSets:
+    - default
+  predicates:
+    - requiredClusterSelector:
+        labelSelector:
+          matchExpressions:
+            - key: environment
+              operator: In
+              values:
+                - dev
+---
+apiVersion: policy.open-cluster-management.io/v1
+kind: PlacementBinding
+metadata:
+  name: openshift-logging-install-placement
+  namespace: default
+placementRef:
+  name: openshift-logging-install-placement
+  apiGroup: cluster.open-cluster-management.io
+  kind: Placement
+subjects:
+  - name: openshift-logging-install
+    apiGroup: policy.open-cluster-management.io
+    kind: Policy
