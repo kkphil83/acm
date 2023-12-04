@@ -1,0 +1,46 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: Machine
+metadata:
+  creationTimestamp: null
+  labels:
+    machine.openshift.io/cluster-api-cluster: ocp2-lh2rj
+    machine.openshift.io/cluster-api-machine-role: worker
+    machine.openshift.io/cluster-api-machine-type: worker
+    machine.openshift.io/region: region
+    machine.openshift.io/zone: zone2
+  name: ocp2-lh2rj-worker-2
+  namespace: openshift-machine-api
+spec:
+  lifecycleHooks: {}
+  metadata: {}
+  providerSpec:
+    value:
+      apiVersion: machine.openshift.io/v1beta1
+      credentialsSecret:
+        name: vsphere-cloud-credentials
+      diskGiB: 120
+      kind: VSphereMachineProviderSpec
+      memoryMiB: 24576
+      metadata:
+        creationTimestamp: null
+      network:
+        devices:
+        - gateway: 10.76.169.254
+          ipAddrs:
+          - 10.76.168.196/23
+          nameservers:
+          - 10.76.168.7
+          networkName: VM Network
+      numCPUs: 12
+      numCoresPerSocket: 2
+      snapshot: ""
+      template: ocp2-lh2rj-rhcos-region-zone2
+      userDataSecret:
+        name: worker-user-data
+      workspace:
+        datacenter: Datacenter
+        datastore: /Datacenter/datastore/host6nfs
+        folder: /Datacenter/vm/ocp2-lh2rj
+        resourcePool: /Datacenter/host/Cluster2//Resources
+        server: vcenter.redhatkrsa.com
+status: {}

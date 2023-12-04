@@ -1,6 +1,6 @@
 apiVersion: v1
 metadata:
-  name: 'ocp2'
+  name: 'ocp1'
 featureSet: TechPreviewNoUpgrade
 additionalTrustBundlePolicy: Proxyonly
 baseDomain: redhatkrsa.com
@@ -24,14 +24,11 @@ compute:
   replicas: 2
   platform:
     vsphere:
-      cpus:  4
+      cpus:  12
       coresPerSocket:  2
-      memoryMB:  8192
+      memoryMB:  24576
       osDisk:
         diskSizeGB: 120
-      zones:
-      - "vmzone1"
-      - "vmzone2"
 networking:
   networkType: OVNKubernetes
   clusterNetwork:
@@ -68,10 +65,10 @@ platform:
     username: administrator@vsphere.local
     password: fpemgot1!KoreaSateam
     datacenter: Datacenter
-    defaultDatastore: host5nfs
+    defaultDatastore: host6nfs
     cluster: Cluster
-    apiVIP: 10.76.168.107
-    ingressVIP: 10.76.168.108
+    apiVIP: 10.76.168.103
+    ingressVIP: 10.76.168.104
     network: 'VM Network'
     diskType: 'thin'
     hosts:
@@ -119,4 +116,4 @@ platform:
         - 10.76.168.7
 pullSecret: "" # skip, hive will inject based on it's secrets
 sshKey: |-
-    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC2FyzWQVtw3YO2z1pBBQ2/zg2uCaMFxv49nZwRkmMAlPJpsBOK4TTzwwcNEWPFjDqLwT9a1d9QNQOxdyIeYNzdDjf4yVx+rcWqMH1/5knhpBYPvkyOgGVZAdt/iF0x/6HJitB/pVsIhoPPe8K0cPVgNDadbAVU0KIc/e2cM2v16Dbw973HRWYbgmWlP6cAqkKpx2r7rYwvaTdAzRZJVg5HE6p0peWQ8C9AfZaynJfZySDgxRhxIyK37WclAnQxktmIr4XT66XGwFqlI1TB5yWqMSX0P4HXIEfaB7oTayRr6Kw/Z2dQAf8/3p0ZtfYW+dIonegXUvZC0GvpwSELs1MNvj2QUrNGjt4Z3w2C2ZhA95kUcIAmJlXANSZ4+0hzqRgAkJQwe3R3tBQ22H3dEgJumxr27pqMdoPhPNv7XyEGiT7nfZ1DVTjXaVhKDL5Q0NcIRsUrOHwiTCsfcjvERjWkdPma/JIUXroX16LYZI0l4OE3rd4RzkEBGqMWsOxFRGsINgLB56Jx5vTmNY2cxVP7P82aLB/bwW07+0+gjq26MtCbblJb5ir4lq3WY4yZ4bvzVq/erwyo6acVK6ma89l0pxbJOeNA3XRXmZHVeZsEgzijGT5JKZ8lZhm8C9fWuoCoOUcFT7P2VAUsyApDMytHvf93zKbBogDamwKBxm/iuQ== sno2@bastion1.hub.redhatkrsa.com
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC1CVATnZslpB97D4UTF22tpL98n7Y988+aw6XbYPf/zQ1YmpQaad4+S8QdbKMInzrDv60BCCmmTbQGIgD2Ag9oufRwmtWf1dBbIERS46Nj8QKoNAHfH/xBqzvfyF4x5IM2LNq9y6QdDFgyBkpT4kVgPUHc7fICSPzR51vM9IVi86HojNMC5AOc/0g2kd/a1fHK3hC4wS/kGIthsNErg3lMfLORCZ55bSwUBXfm7B89R80FTx/H9DF1XpJJ2m8ZXa5Q/OXZnBwYyGO2ii+WWoMhe2gzlVpgXHMb6H7xpOAlO9nz86XJ0ke9740enpuHkEcIUVpsI7y0CO0NmmBqFPWc39mR2iiV2UJ9/RM3ISbHosPZyjUyMKJjPFHPERWALW5Fg8doyr/FChP+H78mVdtjX0ei29JF8jwvFpMlTdKIkklLGmz2vFdL6pi0tQjRIHOSS0GSJ2TMT1kut6d3iP4/A9PTRNS5Htndh5QgXEs8MRdv9/bJtc5WCRxFWr1qzE8= ocp1@bastion1.hub.redhatkrsa.com
