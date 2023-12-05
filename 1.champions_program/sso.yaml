@@ -1,0 +1,70 @@
+
+
+kind: Secret
+apiVersion: v1
+metadata:
+  name: idp-openid-secret
+  namespace: openshift-config
+data:
+  clientSecret: Q1hpeVFXbXd4dXIzU0wxQlAzelk1RXl0VW53b2lhWUM=
+type: Opaque
+
+
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: openid-sso-ca
+  namespace: openshift-config
+data:
+  ca.crt: |-
+    -----BEGIN CERTIFICATE-----
+    MIIDDDCCAfSgAwIBAgIBATANBgkqhkiG9w0BAQsFADAmMSQwIgYDVQQDDBtpbmdy
+    ZXNzLW9wZXJhdG9yQDE2OTg5MzA0MzYwHhcNMjMxMTAyMTMwNzE1WhcNMjUxMTAx
+    MTMwNzE2WjAmMSQwIgYDVQQDDBtpbmdyZXNzLW9wZXJhdG9yQDE2OTg5MzA0MzYw
+    ggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDCGltRf2elwJgOk5E5p+PF
+    zAWGL8h5JpFsATrYVKx2TESyytatyHTttNMd6ydFHTnqwBXO9bILCrcr6Ju4oTDe
+    5iPFIcuWnZafREakVlNl0JdveE8jb6sIMdwbSk19Ix7IKhCAch5iIVioqvwMTqlv
+    8SQd7l5nM+uH3QjJQjbmMEoca2YUz4KXLzv8tNwfELir9RId+qLO/5ksqK9uWXtb
+    lqqiB974pJYg9GncROCYVZorJN4a8LdN/KqcAt4nTKbgPqfcruAfPX6YsO0pfjH+
+    vhEq/yohwo6EV97104RyKzRGStlfVPnladao04fGfZERsq/pToplOQ7NnoKWDlbv
+    AgMBAAGjRTBDMA4GA1UdDwEB/wQEAwICpDASBgNVHRMBAf8ECDAGAQH/AgEAMB0G
+    A1UdDgQWBBTM7Q38U9sOCCd0Ol1X0t5ghi1IHzANBgkqhkiG9w0BAQsFAAOCAQEA
+    qI9D75yzHCjl491KMZM3jtBdSAb2CK1qHNPMrg0zUcaT8OKGNCXHtZnvFxvSpnfv
+    7MIUwO/sw1+eSR+1u3H2U9wAAAmHsOOiTLezCIqmSO9NzmCfjkTCNzSN7zfsC2XU
+    3qovfYUYbcuHAfartamgl159qHuiNFmhBrqlJ/OlZnEIrmJwlBXn4cCv0wkip/2I
+    YBE2nPZ0ZVEG6oZW20lPCuIPUu9ieIbqMCV+5rBGW0e45U7NvbQpYuH1awhqUOX/
+    6RNl4iTd2XKVHI52A9aDmjnsrXC7pDTr7k8FvIXnmueqUirYlJzeDUdLpjyRgchz
+    b3sAynEb0HtsYFmaZ3Bu3w==
+    -----END CERTIFICATE-----
+
+
+
+
+apiVersion: config.openshift.io/v1
+kind: OAuth
+metadata:
+  name: cluster
+spec:
+  identityProviders:
+    - mappingMethod: claim
+      name: openid
+      openID:
+        ca:
+          name: openid-sso-ca
+        claims:
+          email:
+            - email
+          name:
+            - name
+          preferredUsername:
+            - preferred_username
+        clientID: sso
+        clientSecret:
+          name: idp-openid-secret
+        extraScopes: []
+        issuer: 'https://keycloak-rhsso.apps.cluster-7lkrc.dynamic.opentlc.com/auth/realms/openshift'
+      type: OpenID
+
+
+
