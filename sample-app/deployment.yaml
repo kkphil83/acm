@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: httpd
-        image: httpd
+        image: registry.access.redhat.com/ubi9/httpd-24
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
