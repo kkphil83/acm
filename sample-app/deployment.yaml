@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: httpd
-        image: init-quay.hub.redhatkrsa.com:8443/rhel9/httpd-24:latest
+        image: httpd
         ports:
         - containerPort: 8080
         imagePullPolicy: Always
