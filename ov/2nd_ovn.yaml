@@ -14,6 +14,7 @@ spec:
 
 
 
+
 apiVersion: k8s.cni.cncf.io/v1
 kind: NetworkAttachmentDefinition
 metadata:
@@ -29,4 +30,39 @@ spec:
             "mtu": 1300, 
             "vlanID": 3001,
             "netAttachDefName": "vm-test/localnet1" 
+    }
+
+
+
+
+
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: mapping
+spec:
+  desiredState:
+    ovn:
+      bridge-mappings:
+        - bridge: br-ex
+          localnet: localnet-network
+          state: present
+  nodeSelector:
+    node-role.kubernetes.io/worker: ''
+
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: localnet-network
+  namespace: vm-test
+spec:
+  config: |2
+    {
+            "cniVersion": "0.3.1",
+            "name": "localnet-network",
+            "type": "ovn-k8s-cni-overlay",
+            "topology": "localnet",
+            "subnets": "192.168.123.1/24",
+            "netAttachDefName": "vm-test/localnet-network"
     }
