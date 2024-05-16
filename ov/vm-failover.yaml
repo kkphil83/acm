@@ -1,4 +1,3 @@
-
 apiVersion: fence-agents-remediation.medik8s.io/v1alpha1
 kind: FenceAgentsRemediationTemplate
 metadata:
@@ -21,9 +20,14 @@ spec:
       retryinterval: 5s
       sharedparameters:
         '--action': reboot
+        '--ip': 192.168.123.1
+        '--lanplus': ''
         '--password': redhat
         '--username': admin
       timeout: 1m0s
+
+
+
 
 
 
@@ -49,6 +53,3 @@ spec:
     - duration: 5s
       status: Unknown
       type: Ready
-
-
-

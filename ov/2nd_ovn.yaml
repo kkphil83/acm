@@ -22,15 +22,11 @@ metadata:
 spec:
   config: |
     {
-            "cniVersion": "0.3.1",
-            "name": "localnet1",
-            "type": "ovn-k8s-cni-overlay",
-            "topology":"localnet",
-            "mtu": 1300,
+            "cniVersion": "0.3.1", 
+            "name": "localnet1", 
+            "type": "ovn-k8s-cni-overlay", 
+            "topology":"localnet", 
+            "mtu": 1300, 
             "vlanID": 3001,
-            "netAttachDefName": "vm-test/localnet1"
+            "netAttachDefName": "vm-test/localnet1" 
     }
-
-
-
-
