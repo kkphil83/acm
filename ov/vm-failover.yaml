@@ -1,0 +1,54 @@
+
+apiVersion: fence-agents-remediation.medik8s.io/v1alpha1
+kind: FenceAgentsRemediationTemplate
+metadata:
+  name: fence-agents-remediation-template-fence-ipmilan
+  namespace: openshift-workload-availability
+spec:
+  template:
+    spec:
+      agent: fence_ipmilan
+      nodeparameters:
+        '--ipport':
+          ocp4-master1.aio.example.com: '6231'
+          ocp4-master2.aio.example.com: '6232'
+          ocp4-master3.aio.example.com: '6233'
+          ocp4-worker1.aio.example.com: '6234'
+          ocp4-worker2.aio.example.com: '6235'
+          ocp4-worker3.aio.example.com: '6236'
+      remediationStrategy: ResourceDeletion
+      retrycount: 5
+      retryinterval: 5s
+      sharedparameters:
+        '--action': reboot
+        '--password': redhat
+        '--username': admin
+      timeout: 1m0s
+
+
+
+apiVersion: remediation.medik8s.io/v1alpha1
+kind: NodeHealthCheck
+metadata:
+  name: nodehealthcheck
+spec:
+  minHealthy: 51%
+  remediationTemplate:
+    apiVersion: fence-agents-remediation.medik8s.io/v1alpha1
+    kind: FenceAgentsRemediationTemplate
+    name: fence-agents-remediation-template-fence-ipmilan
+    namespace: openshift-workload-availability
+  selector:
+    matchExpressions:
+      - key: openshift-virtualization
+        operator: Exists
+  unhealthyConditions:
+    - duration: 5s
+      status: 'False'
+      type: Ready
+    - duration: 5s
+      status: Unknown
+      type: Ready
+
+
+
