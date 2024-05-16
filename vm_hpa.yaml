@@ -1,0 +1,15 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: myhpa
+spec:
+  scaleTargetRef:
+    kind: VirtualMachineInstanceReplicaSet
+    name: vmi-replicaset-cirros
+    apiVersion: kubevirt.io/v1
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+
+
+kubectl autoscale vmirs vmi-replicaset-cirros --min=3 --max=10
