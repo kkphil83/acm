@@ -63,10 +63,12 @@ spec:
             "name": "localnet-network",
             "type": "ovn-k8s-cni-overlay",
             "topology": "localnet",
-            "mtu": 1300, 
-            "vlanID": 3001,
             "netAttachDefName": "vm-test/localnet-network"
     }
 
 
 그리고 Cloud-init 에서 Add network data에서는 게이트웨이 기입 안함
+
+218.50.7.93/27
+
+218.50.7.65

@@ -1,0 +1,81 @@
+apiVersion: machine.openshift.io/v1beta1
+kind: MachineSet
+metadata:
+  annotations:
+    capacity.cluster-autoscaler.kubernetes.io/labels: kubernetes.io/arch=amd64
+    machine.openshift.io/GPU: '0'
+    machine.openshift.io/memoryMb: '65536'
+    machine.openshift.io/vCPU: '16'
+  name: cluster-lglnp-8z648-z1d-metal-ap-southeast-1b
+  namespace: openshift-machine-api
+  labels:
+    machine.openshift.io/cluster-api-cluster: cluster-lglnp-8z648
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      machine.openshift.io/cluster-api-cluster: cluster-lglnp-8z648
+      machine.openshift.io/cluster-api-machineset: cluster-lglnp-8z648-z1d-metal-ap-southeast-1b
+  template:
+    metadata:
+      labels:
+        machine.openshift.io/cluster-api-cluster: cluster-lglnp-8z648
+        machine.openshift.io/cluster-api-machine-role: worker
+        machine.openshift.io/cluster-api-machine-type: worker
+        machine.openshift.io/cluster-api-machineset: cluster-lglnp-8z648-z1d-metal-ap-southeast-1b
+    spec:
+      metadata: {}
+      lifecycleHooks: {}
+      providerSpec:
+        value:
+          userDataSecret:
+            name: worker-user-data
+          placement:
+            availabilityZone: ap-southeast-1b
+            region: ap-southeast-1
+          credentialsSecret:
+            name: aws-cloud-credentials
+          instanceType: z1d.metal
+          metadata:
+            creationTimestamp: null
+          blockDevices:
+            - ebs:
+                encrypted: true
+                iops: 0
+                kmsKey:
+                  arn: ''
+                volumeSize: 100
+                volumeType: gp2
+          securityGroups:
+            - filters:
+                - name: 'tag:Name'
+                  values:
+                    - cluster-lglnp-8z648-worker-sg
+          kind: AWSMachineProviderConfig
+          metadataServiceOptions: {}
+          tags:
+            - name: kubernetes.io/cluster/cluster-lglnp-8z648
+              value: owned
+            - name: Stack
+              value: project ocp4-cluster-lglnp
+            - name: env_type
+              value: ocp4-cluster
+            - name: guid
+              value: lglnp
+            - name: owner
+              value: unknown
+            - name: platform
+              value: RHPDS
+            - name: uuid
+              value: e1bbb011-6c07-56e9-a705-4ec334b2c866
+          deviceIndex: 0
+          ami:
+            id: ami-031903ee0aa8dfee5
+          subnet:
+            filters:
+              - name: 'tag:Name'
+                values:
+                  - cluster-lglnp-8z648-private-ap-southeast-1b
+          apiVersion: machine.openshift.io/v1beta1
+          iamInstanceProfile:
+            id: cluster-lglnp-8z648-worker-profile
