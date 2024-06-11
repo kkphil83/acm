@@ -1,0 +1,40 @@
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfigPool
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: infra
+    machineconfiguration.openshift.io/mco-built-in: ''
+    pools.operator.machineconfiguration.openshift.io/infra: ''
+  name: infra
+spec:
+  configuration:
+    name: rendered-worker-f66c02964b6c35eaca94111e60f305cc
+    source:
+      - apiVersion: machineconfiguration.openshift.io/v1
+        kind: MachineConfig
+        name: 00-worker
+      - apiVersion: machineconfiguration.openshift.io/v1
+        kind: MachineConfig
+        name: 01-worker-container-runtime
+      - apiVersion: machineconfiguration.openshift.io/v1
+        kind: MachineConfig
+        name: 99-worker-ssh
+      - apiVersion: machineconfiguration.openshift.io/v1
+        kind: MachineConfig
+        name: 99-worker-generated-registries
+      - apiVersion: machineconfiguration.openshift.io/v1
+        kind: MachineConfig
+        name: 01-worker-kubelet
+      - apiVersion: machineconfiguration.openshift.io/v1
+        kind: MachineConfig
+        name: 97-worker-generated-kubelet
+      - apiVersion: machineconfiguration.openshift.io/v1
+        kind: MachineConfig
+        name: 98-worker-generated-kubelet
+  machineConfigSelector:
+    matchLabels:
+      machineconfiguration.openshift.io/role: infra
+  nodeSelector:
+    matchLabels:
+      node-role.kubernetes.io/infra: ''
+  paused: false
