@@ -143,7 +143,7 @@ objects:
         apiVersion: snapshot.kubevirt.io/v1alpha1
         kind: VirtualMachineSnapshot
         metadata:
-          name: snapshot-'${NAME}'-$timestamp
+          name: snapshot-${NAME}-$timestamp
         spec:
           source:
             apiGroup: kubevirt.io
