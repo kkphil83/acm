@@ -1,0 +1,195 @@
+kind: Template
+apiVersion: template.openshift.io/v1
+metadata:
+  name: centos-stream8-snap
+  labels:
+    workload.template.kubevirt.io/desktop: 'true'
+    app.kubernetes.io/part-of: hyperconverged-cluster
+    flavor.template.kubevirt.io/small: 'true'
+    template.kubevirt.io/version: v0.27.0
+    app.kubernetes.io/version: 4.15.2
+    template.kubevirt.io/type: base
+    app.kubernetes.io/component: templating
+    app.kubernetes.io/name: custom-templates
+    os.template.kubevirt.io/centos-stream8: 'true'
+  annotations:
+    name.os.template.kubevirt.io/centos-stream8: CentOS Stream 8 or higher
+    template.kubevirt.io/provider: ''
+    template.kubevirt.io/provider-url: 'https://www.centos.org'
+    template.kubevirt.io/containerdisks: |
+      quay.io/containerdisks/centos-stream:8
+    template.kubevirt.io/version: v1alpha1
+    openshift.io/display-name: CentOS Stream 8 VM (5mins Snapshot Policy)
+    openshift.io/documentation-url: 'https://github.com/kubevirt/common-templates'
+    template.kubevirt.io/images: |
+      https://cloud.centos.org/centos/8-stream/x86_64/images/CentOS-Stream-GenericCloud-8-latest.x86_64.qcow2
+    operator-sdk/primary-resource-type: SSP.ssp.kubevirt.io
+    defaults.template.kubevirt.io/disk: rootdisk
+    template.kubevirt.io/editable: |
+      /objects[0].spec.template.spec.domain.cpu.sockets
+      /objects[0].spec.template.spec.domain.cpu.cores
+      /objects[0].spec.template.spec.domain.cpu.threads
+      /objects[0].spec.template.spec.domain.memory.guest
+      /objects[0].spec.template.spec.domain.devices.disks
+      /objects[0].spec.template.spec.volumes
+      /objects[0].spec.template.spec.networks
+    template.openshift.io/bindable: 'false'
+    openshift.kubevirt.io/pronounceable-suffix-for-name-expression: 'true'
+    operator-sdk/primary-resource: openshift-cnv/ssp-kubevirt-hyperconverged
+    tags: 'hidden,kubevirt,virtualmachine,linux,centosstream'
+    template.kubevirt.io/provider-support-level: Community
+    description: Template for CentOS Stream 8 VM or newer. A PVC with the CentOS Stream disk image must be available.
+    openshift.io/support-url: 'https://github.com/kubevirt/common-templates/issues'
+    iconClass: icon-centos
+    openshift.io/provider-display-name: ''
+objects:
+  - apiVersion: kubevirt.io/v1
+    kind: VirtualMachine
+    metadata:
+      annotations:
+        vm.kubevirt.io/validations: |
+          [
+            {
+              "name": "minimal-required-memory",
+              "path": "jsonpath::.spec.domain.memory.guest",
+              "rule": "integer",
+              "message": "This VM requires more memory.",
+              "min": 1610612736
+            }
+          ]
+      labels:
+        app: '${NAME}'
+        vm.kubevirt.io/template: centos-stream8-snap
+        vm.kubevirt.io/template.revision: '1'
+        vm.kubevirt.io/template.version: v0.27.0
+      name: '${NAME}'
+    spec:
+      dataVolumeTemplates:
+        - apiVersion: cdi.kubevirt.io/v1beta1
+          kind: DataVolume
+          metadata:
+            name: '${NAME}'
+          spec:
+            sourceRef:
+              kind: DataSource
+              name: '${DATA_SOURCE_NAME}'
+              namespace: '${DATA_SOURCE_NAMESPACE}'
+            storage:
+              resources:
+                requests:
+                  storage: 30Gi
+      running: false
+      template:
+        metadata:
+          annotations:
+            vm.kubevirt.io/flavor: small
+            vm.kubevirt.io/os: centos-stream8
+            vm.kubevirt.io/workload: desktop
+          labels:
+            kubevirt.io/domain: '${NAME}'
+            kubevirt.io/size: small
+        spec:
+          domain:
+            cpu:
+              cores: 1
+              sockets: 1
+              threads: 1
+            devices:
+              disks:
+                - disk:
+                    bus: virtio
+                  name: rootdisk
+                - disk:
+                    bus: virtio
+                  name: cloudinitdisk
+              inputs:
+                - bus: virtio
+                  name: tablet
+                  type: tablet
+              interfaces:
+                - masquerade: {}
+                  model: virtio
+                  name: default
+              networkInterfaceMultiqueue: true
+              rng: {}
+            machine:
+              type: pc-q35-rhel9.2.0
+            memory:
+              guest: 2Gi
+          networks:
+            - name: default
+              pod: {}
+          terminationGracePeriodSeconds: 180
+          volumes:
+            - dataVolume:
+                name: '${NAME}'
+              name: rootdisk
+            - cloudInitNoCloud:
+                userData: |-
+                  #cloud-config
+                  user: centos
+                  password: ${CLOUD_USER_PASSWORD}
+                  chpasswd: { expire: False }
+              name: cloudinitdisk
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: vm-${NAME}-snapshot-sh
+    data:
+      create_vm_snapshot_policy.sh: |-
+        #!/bin/bash
+        timestamp=$(TZ='Asia/Seoul' date +%Y%m%d-%H%M%S)
+        cat > /tmp/CronjobVMSnapshot.yaml <<-EOF
+        apiVersion: snapshot.kubevirt.io/v1alpha1
+        kind: VirtualMachineSnapshot
+        metadata:
+          name: snapshot-'${NAME}'-$timestamp
+        spec:
+          source:
+            apiGroup: kubevirt.io
+            kind: VirtualMachine
+            name: '${NAME}'
+        EOF
+        oc create -f /tmp/CronjobVMSnapshot.yaml 
+        rm /tmp/CronjobVMSnapshot.yaml 
+  - apiVersion: batch/v1
+    kind: CronJob
+    metadata:
+      name: vm-${NAME}-snapshot
+    spec:
+      schedule: '*/5 * * * *'
+      jobTemplate:
+        spec:
+          template:
+            spec:
+              containers:
+                - name: oc-cli
+                  image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+                  command:
+                    - /bin/sh 
+                    - -c
+                    - /vm-snapshot-sh/create_vm_snapshot_policy.sh
+                  volumeMounts:
+                  - name: vm-snapshot-sh
+                    mountPath: /vm-snapshot-sh
+              volumes:
+                - name: vm-snapshot-sh
+                  configMap:
+                    defaultMode: 0555
+                    name: vm-${NAME}-snapshot-sh
+              restartPolicy: OnFailure
+parameters:
+  - name: NAME
+    description: VM name
+    generate: expression
+    from: 'centos-stream8-[a-z0-9]{16}'
+  - name: DATA_SOURCE_NAME
+    description: Name of the DataSource to clone
+    value: centos-stream8
+  - name: DATA_SOURCE_NAMESPACE
+    description: Namespace of the DataSource
+    value: openshift-virtualization-os-images
+  - name: CLOUD_USER_PASSWORD
+    description: Randomized password for the cloud-init user centos
+    generate: expression
+    from: '[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}'

@@ -1,0 +1,114 @@
+
+[lab-user@bastion ~]$ cat create_vm_snapshot_policy.sh 
+#!/bin/bash
+timestamp=$(TZ='Asia/Seoul' date +%Y%m%d-%H%M%S)
+cat > CronjobVMSnapshot.yaml <<-EOF
+apiVersion: snapshot.kubevirt.io/v1alpha1
+kind: VirtualMachineSnapshot
+metadata:
+  name: snapshot-rhel-8-1-2-$timestamp
+spec:
+  source:
+    apiGroup: kubevirt.io
+    kind: VirtualMachine
+    name: rhel-8-1-2
+EOF
+oc create -f CronjobVMSnapshot.yaml 
+rm CronjobVMSnapshot.yaml
+
+
+
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: snapshot-to-default
+  namespace: numa-test
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kubevirt-controller
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: numa-test
+
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vm-snapshot-sh
+data:
+  create_vm_snapshot_policy.sh: |-
+    #!/bin/bash
+    timestamp=$(TZ='Asia/Seoul' date +%Y%m%d-%H%M%S)
+    cat > /tmp/CronjobVMSnapshot.yaml <<-EOF
+    apiVersion: snapshot.kubevirt.io/v1alpha1
+    kind: VirtualMachineSnapshot
+    metadata:
+      name: snapshot-rhel-8-1-2-$timestamp
+    spec:
+      source:
+        apiGroup: kubevirt.io
+        kind: VirtualMachine
+        name: rhel-8-1-2
+    EOF
+    oc create -f /tmp/CronjobVMSnapshot.yaml 
+    rm /tmp/CronjobVMSnapshot.yaml
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vm-snapshot-hourly
+  namespace: numa-test
+spec:
+  schedule: '*/5 * * * *'
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: oc-cli
+              image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+              command:
+                - /bin/sh 
+                - -c
+                - /vm-snapshot-sh/create_vm_snapshot_policy.sh
+              volumeMounts:
+              - name: vm-snapshot-sh
+                mountPath: /vm-snapshot-sh
+          volumes:
+            - name: vm-snapshot-sh
+              configMap:
+                defaultMode: 0555
+                name: vm-snapshot-sh
+          restartPolicy: OnFailure
+
+
+
+
+kind: Pod
+apiVersion: v1
+metadata:
+  name: vm-snapshot-hourly-211
+  namespace: numa-test
+spec:
+  restartPolicy: OnFailure
+  containers:
+    - resources: {}
+      name: oc-cli
+      command:
+        - sleep
+        - "36000"
+      imagePullPolicy: Always
+      volumeMounts:
+        - name: vm-snapshot-sh
+          mountPath: /vm-snapshot-sh
+      image: 'image-registry.openshift-image-registry.svc:5000/openshift/cli'
+  serviceAccount: default
+  volumes:
+    - name: vm-snapshot-sh
+      configMap:
+        name: vm-snapshot-sh
+        defaultMode: 0555
