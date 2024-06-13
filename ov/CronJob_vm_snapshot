@@ -112,3 +112,27 @@ spec:
       configMap:
         name: vm-snapshot-sh
         defaultMode: 0555
+
+
+
+
+array=($(oc get VirtualMachineSnapshot | grep centos-stream8-1 | cut -d ' ' -f1))
+
+echo ${#array[@]}
+
+oc delete VirtualMachineSnapshot $(array[0])
+
+
+[lab-user@bastion ~]$ cat managed_snapshot_count_5.sh 
+#!/bin/bash
+ 
+array=($(oc get VirtualMachineSnapshot | grep centos-stream8-1 | cut -d ' ' -f1))
+count=$((${#array[@]} - 5))
+
+echo $count
+
+for (( i=0 ; i < count ; i++ ));
+do
+  echo 'Delete VirtualMachineSnapshot :' ${array[$i]}
+  oc delete VirtualMachineSnapshot ${array[$i]}
+done

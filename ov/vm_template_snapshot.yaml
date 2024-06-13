@@ -178,6 +178,50 @@ objects:
                     defaultMode: 0555
                     name: vm-${NAME}-snapshot-sh
               restartPolicy: OnFailure
+  - apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: manage-vm-${NAME}-snapshot-count-5-sh
+    data:
+      manage_snapshot_count_5.sh: |-
+        #!/bin/bash
+
+        array=($(oc get VirtualMachineSnapshot | grep snapshot-${NAME}- | cut -d ' ' -f1))
+        count=$((${#array[@]} - 5))
+
+        echo $count
+
+        for (( i=0 ; i < count ; i++ ));
+        do
+          echo 'Delete VirtualMachineSnapshot :' ${array[$i]}
+          oc delete VirtualMachineSnapshot ${array[$i]}
+        done
+  - apiVersion: batch/v1
+    kind: CronJob
+    metadata:
+      name: manage-vm-${NAME}-snapshot
+    spec:
+      schedule: '@hourly'
+      jobTemplate:
+        spec:
+          template:
+            spec:
+              containers:
+                - name: oc-cli
+                  image: image-registry.openshift-image-registry.svc:5000/openshift/cli
+                  command:
+                    - /bin/sh 
+                    - -c
+                    - /manage-vm-snapshot/manage_snapshot_count_5.sh
+                  volumeMounts:
+                  - name: manage-vm-snapshot-count-5
+                    mountPath: /manage-vm-snapshot
+              volumes:
+                - name: manage-vm-snapshot-count-5
+                  configMap:
+                    defaultMode: 0555
+                    name: manage-vm-${NAME}-snapshot-count-5-sh
+              restartPolicy: OnFailure
 parameters:
   - name: NAME
     description: VM name
