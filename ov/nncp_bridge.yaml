@@ -21,6 +21,20 @@ spec:
     node-role.kubernetes.io/worker: ""
 
 
+
+
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  annotations:
+    k8s.v1.cni.cncf.io/resourceName: bridge.network.kubevirt.io/br1
+  name: vm-network
+  namespace: vm-test
+spec:
+  config: '{"name":"vm-network","type":"bridge","cniVersion":"0.4.0","bridge":"br1","macspoofchk":true,"ipam":{},"preserveDefaultVlan":false}'
+
+
+
 # 참고
 
     { "cniVersion": "0.3.1", "name": "bridge-main", "type": "bridge", "bridge":
@@ -46,12 +60,3 @@ spec:
     }
 
 
-apiVersion: k8s.cni.cncf.io/v1
-kind: NetworkAttachmentDefinition
-metadata:
-  annotations:
-    k8s.v1.cni.cncf.io/resourceName: bridge.network.kubevirt.io/br1
-  name: vm-network
-  namespace: vm-test
-spec:
-  config: '{"name":"vm-network","type":"bridge","cniVersion":"0.3.1","bridge":"br1","macspoofchk":true,"ipam":{},"preserveDefaultVlan":false}'
