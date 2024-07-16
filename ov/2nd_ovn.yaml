@@ -72,3 +72,48 @@ spec:
 218.50.7.93/27
 
 218.50.7.65
+
+
+
+
+apiVersion: nmstate.io/v1
+kind: NodeNetworkConfigurationPolicy
+metadata:
+  name: ovs-br-flat
+spec:
+  desiredState:
+    interfaces:
+    - bridge:
+        options:
+          stp: false
+        port:
+        - name: enp3s0
+      description: An OVS with enp3s0 uplink
+      name: ovs-br
+      state: up
+      type: ovs-bridge
+    ovn:
+      bridge-mappings:
+      - bridge: ovs-br
+        localnet: vm-network
+        state: present
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
+
+
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  annotations:
+    description: l2 connection for vms
+  name: vlan0
+  namespace: vm-test
+spec:
+  config: |-
+    {
+      "cniVersion": "0.4.0",
+      "name": "vm-network",
+      "type": "ovn-k8s-cni-overlay",
+      "topology": "localnet",
+      "netAttachDefName": "vm-test/vlan0"
+    }
