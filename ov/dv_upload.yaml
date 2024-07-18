@@ -1,0 +1,4 @@
+
+virtctl image-upload dv windows2019-iso --size=6Gi --image-path=./Windows2019.iso --insecure
+
+virtctl image-upload dv windows2022-iso --size=6Gi --image-path=./Windows2022.iso --insecure

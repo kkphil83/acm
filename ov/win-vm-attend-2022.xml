@@ -29,7 +29,7 @@
           <InstallFrom>
             <MetaData wcm:action="add">
               <Key>/IMAGE/NAME</Key>
-              <Value>Windows Server 2019 SERVERSTANDARD</Value>
+              <Value>Windows Server 2022 SERVERSTANDARD</Value>
             </MetaData>
           </InstallFrom>
           <InstallTo>
@@ -90,7 +90,7 @@
           </LocalAccount>
         </LocalAccounts>
       </UserAccounts>
-      <TimeZone>Eastern Standard Time</TimeZone>
+      <TimeZone>Korea Standard Time</TimeZone>
     </component>
   </settings>
   <settings pass="oobeSystem">
@@ -129,7 +129,7 @@
           </LocalAccount>
         </LocalAccounts>
       </UserAccounts>
-      <TimeZone>Eastern Standard Time</TimeZone>
+      <TimeZone>Korea Standard Time</TimeZone>
     </component>
   </settings>
 </unattend>
