@@ -53,3 +53,57 @@ spec:
     - duration: 5s
       status: Unknown
       type: Ready
+
+
+
+kind: FenceAgentsRemediationTemplate
+apiVersion: fence-agents-remediation.medik8s.io/v1alpha1
+metadata:
+  name: fenceagentsremediationtemplate-default
+  namespace: openshift-workload-availability
+spec:
+  template:
+    spec:
+      agent: fence_ipmilan
+      nodeparameters:
+        '--ip':
+          worker01.ocp4.platform.saltware.co.kr: 218.50.7.74
+          worker02.ocp4.platform.saltware.co.kr: 218.50.7.76
+        '--password':
+          worker01.ocp4.platform.saltware.co.kr: L1
+          worker02.ocp4.platform.saltware.co.kr: L1
+        '--username':
+          worker01.ocp4.platform.saltware.co.kr: admin
+          worker02.ocp4.platform.saltware.co.kr: admin
+      remediationStrategy: ResourceDeletion
+      retrycount: 3
+      retryinterval: 3s
+      sharedparameters:
+        '--lanplus': ''
+      timeout: 30s
+
+
+
+
+apiVersion: remediation.medik8s.io/v1alpha1
+kind: NodeHealthCheck
+metadata:
+  name: nodehealthcheck
+spec:
+  minHealthy: 40%
+  remediationTemplate:
+    apiVersion: fence-agents-remediation.medik8s.io/v1alpha1
+    kind: FenceAgentsRemediationTemplate
+    name: fenceagentsremediationtemplate-default
+    namespace: openshift-workload-availability
+  selector:
+    matchExpressions:
+      - key: node-role.kubernetes.io/worker
+        operator: Exists
+  unhealthyConditions:
+    - duration: 5s
+      status: 'False'
+      type: Ready
+    - duration: 5s
+      status: Unknown
+      type: Ready
