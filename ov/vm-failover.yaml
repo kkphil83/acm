@@ -79,6 +79,7 @@ spec:
       retrycount: 3
       retryinterval: 3s
       sharedparameters:
+        '--action': reboot
         '--lanplus': ''
       timeout: 30s
 
