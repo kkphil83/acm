@@ -1,0 +1,78 @@
+
+## NFS 서버 구성
+
+yum install -y nfs-utils
+
+systemctl start nfs-server
+systemctl enable nfs-server
+systemctl status nfs-server
+
+
+mkdir -p /storage
+chmod 777 /storage
+
+echo "/storage   *(rw,no_wdelay,no_subtree_check,async,insecure,no_root_squash)" >> /etc/exports
+
+exportfs -a
+showmount -e
+
+
+# 프로비저너 설치
+
+https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner
+
+helm repo add nfs-subdir-external-provisioner https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+helm install nfs-subdir-external-provisioner nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+    --set nfs.server=x.x.x.x \
+    --set nfs.path=/exported/path
+
+
+# Disconnect 환경의 경우 해당 내용 먼저
+
+### 외부에서 수행
+
+mkdir –p /root/nfs
+cd /root/nfs
+
+git clone https://github.com/kubernetes-incubator/external-storage.git kubernetes-incubator
+ 
+tar cvf kubernetes-incubator.tar ./kubernetes-incubator
+
+cd ~
+podman pull quay.io/external_storage/nfs-client-provisioner:latest
+podman image save -o=nfs-client-image.tar quay.io/external_storage/nfs-client-provisioner:latest
+
+cp ./nfs-client-image.tar /root/nfs
+
+# scp 명령어를 사용하여 Bastion 서버로 kubernetes-incubator.tar 및 nfs-client-image.tar 파일 복사
+
+### BASTION 서버에서 수행
+
+cd /root/nfs
+
+podman load -i nfs-client-image.tar
+podman image tag quay.io/external_storage/nfs-client-provisioner:latest  registry.mcm.kubenara.com:5000/external_storage/nfs-client-provisioner:latest
+podman push  registry.mcm.kubenara.com:5000/external_storage/nfs-client-provisioner:latest --tls-verify=false
+
+curl -k -u ocpadm:passw0rd https://registry.mcm.kubenara.com/v2/_catalog
+ 
+curl -k -u ocpadm:passw0rd  https://registry.mcm.kubenara.com/v2/external_storage/nfs-client-provisioner/tags/list | jq
+
+
+tar xvf kubernetes-incubator.tar
+
+oc create namespace openshift-nfs-storage
+oc label namespace openshift-nfs-storage "openshift.io/cluster-monitoring=true"
+oc project openshift-nfs-storage
+
+NAMESPACE=`oc project -q`
+echo $NAMESPACE
+
+cd /root/nfs/kubernetes-incubator/nfs-client
+
+sed -i'' "s/namespace:.*/namespace: $NAMESPACE/g" ./deploy/rbac.yaml
+sed -i'' "s/namespace:.*/namespace: $NAMESPACE/g" ./deploy/deployment.yaml
+
+sed -i'' "s/fuseim.pri\/ifs/storage.io\/nfs/g" ./deploy/class.yaml
+
+

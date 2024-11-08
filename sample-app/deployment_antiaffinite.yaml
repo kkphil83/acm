@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-sample
+  labels:
+    app: httpd-sample
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: httpd-sample
+  template:
+    metadata:
+      labels:
+        app: httpd-sample
+    spec:
+      containers:
+      - name: httpd
+        image: registry.access.redhat.com/ubi9/httpd-24
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /var/www/html
+          name: httpd
+          subPath: html
+      volumes:
+      - name: httpd
+        persistentVolumeClaim:
+          claimName: httpd-pvc
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app
+                      operator: In
+                      values:
+                        - httpd-sample
+                topologyKey: kubernetes.io/hostname
+              weight: 100
