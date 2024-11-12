@@ -5,7 +5,7 @@ metadata:
   labels:
     app: httpd-sample
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: httpd-sample
@@ -17,6 +17,13 @@ spec:
       containers:
       - name: httpd
         image: registry.access.redhat.com/ubi9/httpd-24
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "500m"
+          limits:
+            memory: "512Mi"
+            cpu: "1"
         ports:
         - containerPort: 8080
         imagePullPolicy: Always

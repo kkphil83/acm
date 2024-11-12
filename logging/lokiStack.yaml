@@ -8,17 +8,19 @@ spec:
     global:
       ingestion:
         ingestionBurstSize: 16
-        ingestionRate: 8
-  size: 1x.small 
+        ingestionRate: 8 
+      queries:
+        queryTimeout: 3m
+  size: 1x.small
   storage:
-#    tls:
-#      caName: s3
+    tls:
+      caName: s3
     schemas:
-    - version: v12
+    - version: v13
       effectiveDate: '2022-06-01'
     secret:
       name: logging-loki-s3
       type: s3
-  storageClassName: thin-csi
+  storageClassName: unity-fc
   tenants:
     mode: openshift-logging
