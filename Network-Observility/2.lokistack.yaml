@@ -10,8 +10,36 @@ spec:
     - version: v12
       effectiveDate: '2022-06-01'
     secret:
-      name: loki-s3
+      name: loki-s3-netobserv
       type: s3
   storageClassName: ocs-external-storagecluster-ceph-rbd
+  tenants:
+    mode: openshift-network
+
+
+apiVersion: loki.grafana.com/v1
+kind: LokiStack
+metadata:
+  name: loki
+  namespace: netobserv
+spec:
+  limits:
+    global:
+      ingestion:
+        ingestionBurstSize: 16
+        ingestionRate: 8 
+      queries:
+        queryTimeout: 3m
+  size: 1x.extra-small
+  storage:
+#    tls:
+#      caName: s3
+    schemas:
+    - version: v13
+      effectiveDate: '2022-06-01'
+    secret:
+      name: loki-s3-netobserv
+      type: s3
+  storageClassName: unity-fc
   tenants:
     mode: openshift-network

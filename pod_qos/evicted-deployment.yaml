@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: evicted
+  labels:
+    app: evicted
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: evicted
+  template:
+    metadata:
+      labels:
+        app: evicted
+    spec:
+      nodeSelector:
+        qos-node: 'true'
+      containers:
+      - name: evicted
+        image: quay.io/kako1/stress:22
+        ports:
+        - containerPort: 8080
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /var/tmp
+          name: evicted
+      volumes:
+      - name: evicted
+        emptyDir:
+          sizeLimit: 500Mi
