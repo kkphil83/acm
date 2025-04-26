@@ -1,0 +1,16 @@
+export TUTORIAL_HOME="$(pwd)/demo-apps"
+
+cat $TUTORIAL_HOME/kubernetes-manifests/medical-application/backend/everything.yml
+
+roxctl netpol connectivity map $TUTORIAL_HOME/kubernetes-manifests/medical-application/backend/everything.yml
+
+roxctl netpol generate $TUTORIAL_HOME/kubernetes-manifests/medical-application/backend/everything.yml >> $TUTORIAL_HOME/kubernetes-manifests/medical-application/backend/everything.yml
+roxctl netpol generate $TUTORIAL_HOME/kubernetes-manifests/medical-application/backend/everything.yml
+cat $TUTORIAL_HOME/kubernetes-manifests/medical-application/backend/everything.yml
+
+oc apply -f $TUTORIAL_HOME/kubernetes-manifests/medical-application/backend/everything.yml
+
+roxctl netpol connectivity map $TUTORIAL_HOME/kubernetes-manifests/medical-application/backend/everything.yml
+
+oc get --all-namespaces networkpolicies -o json | jq '[.items[] | select((.metadata.namespace | startswith("openshift") | not) and (.metadata.namespace | startswith("kube-") | not) and .metadata.namespace != "default") | .metadata.namespace] | unique'
+

@@ -1,0 +1,19 @@
+export ROX_API_TOKEN="eyJhbGciOiJSUzI1NiIsImtpZCI6Imp3dGswIiwidHlwIjoiSldUIn0.eyJFeHBpcmVBdCI6bnVsbCwiYXVkIjoiaHR0cHM6Ly9zdGFja3JveC5pby9qd3Qtc291cmNlcyNhcGktdG9rZW5zIiwiZXhwIjoxNzc2OTA3Njg3LCJpYXQiOjE3NDUzNzE2ODcsImlzcyI6Imh0dHBzOi8vc3RhY2tyb3guaW8vand0IiwianRpIjoiYjNjYzc1OTktNjEwOS00NjQ0LThiMWUtOTA2ZDZmZDZlMDQ1IiwibmFtZSI6ImFwaS1hZG1pbiIsInJvbGVzIjpbIkFkbWluIl19.JzsTlZLs12MD2X2noAWevzEnOTvh4jcg2tQT6DvYtT5ioS3MizoMvOwYUG1-JMdym-NSTQTBQfoHGjKBs4nbvdYhSUQzZtCrJNZ1lyk-TFPep-Zp3M40d7Ua8KaWeVEuEtvRu7wQ1DpNGvbn_uwmC6_1rKzansG9PXmkd9v1Tuxiq3fcPFmvqVzau1yQ0vN5fI5mfK9t5J4fokHJZouJ2ax9RlJn6bpoKw7Ryg-0TkN_724VYvhJQZP2vpjGXULWYO8fUafFfjdwLVwjoVFgvvaPmgUlij9Y88IurKmoM8rg13x6TXR01FNr5cm5yEoWMfNZui66zxWQidOw0aqLSwWu81sN9V50jIjlrSDUjQT0IKM2WBuhfvVd3-PcDomApUtjzOUM4yhLDWbKobhYqpONU-4ei22rRcDG65F0Gh-Lca-Cg3HjCFNY_l0kP7L4N--wBK4ACLPL6SpatvQIJrK3zPSVplSF_pvpZxvwzKh_KKux3aqobUAbUo1Kspxn8-K2RgA8__S3CEGmy-99oXeshYW2WXS27ww-_BXWU75nyd5PQqen9t0E1RBHlPWm-XLZleii_QwQuloXY7GYX3Nb4-Jovaic3N5rnfTokA-h-DopYX5MF-3Y6GwUiH4BvXNwv6ct6hbzvOE5rkWfElWkw9I_3CT90EhnT6_zM-E"
+
+export ROX_CENTRAL_ADDRESS="$(oc -n stackrox get route central -o jsonpath='{.spec.host}')"
+
+
+curl -k -H "Authorization: Bearer $ROX_API_TOKEN" "https://$ROX_CENTRAL_ADDRESS/v1/policies" | jq
+
+curl -k -H "Authorization: Bearer $ROX_API_TOKEN" "https://$ROX_CENTRAL_ADDRESS:443/v1/alerts" | jq
+
+curl -k -H "Authorization: Bearer $ROX_API_TOKEN" https://$ROX_CENTRAL_ADDRESS:443/v1/alerts?query="Namespace:vault" | jq
+
+curl -k -H "Authorization: Bearer $ROX_API_TOKEN" "https://$ROX_CENTRAL_ADDRESS:443/v1/alerts" | jq -r '.alerts[] | select(.state=="ACTIVE") | .id'
+
+curl -k -H "Authorization: Bearer $ROX_API_TOKEN" https://$ROX_CENTRAL_ADDRESS/v1/alerts?query="Cluster:production+Namespace:stackrox,kube-system" | jq -r '.'
+
+curl -k -H "Authorization: Bearer $ROX_API_TOKEN" https://$ROX_CENTRAL_ADDRESS/v1/alerts?query=Severity%3AHIGH_SEVERITY%2BNamespace%3Apayments | jq -r '.'
+
+curl -k -H "Authorization: Bearer $ROX_API_TOKEN" "https://$ROX_CENTRAL_ADDRESS/v1/alerts?query=Violation%20Time%3A%3E1d" | jq -r '.'
+
