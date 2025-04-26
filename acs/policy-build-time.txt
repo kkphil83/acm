@@ -1,6 +1,3 @@
-export QUAY_USER=quayadmin
-export QUAY_URL=$(oc -n quay-enterprise get route quay-quay -o jsonpath='{.spec.host}')
-export ROX_CENTRAL_ADDRESS=https://central-stackrox.apps.cluster-g4pb6.g4pb6.sandbox1805.opentlc.com
 
 podman login $QUAY_URL
 
