@@ -3,3 +3,13 @@ oc delete -f $TUTORIAL_HOME/kubernetes-manifests/ctf-web-to-system/ctf-w2s.yml
 oc apply -f $TUTORIAL_HOME/kubernetes-manifests/ctf-web-to-system/ctf-w2s.yml
 
 roxctl -e $ROX_CENTRAL_ADDRESS:443 deployment check --file $TUTORIAL_HOME/kubernetes-manifests/ctf-web-to-system/ctf-w2s.yml --insecure-skip-tls-verify
+
+
+
+# Deploy time Policy
+
+oc delete -f $APP_HOME/skupper-demo/frontend.yml
+
+oc apply -f $APP_HOME/skupper-demo/frontend.yml
+
+roxctl -e $ROX_CENTRAL_ADDRESS:443 deployment check --file $APP_HOME/skupper-demo/frontend.yml --insecure-skip-tls-verify

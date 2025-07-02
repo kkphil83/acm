@@ -12,3 +12,18 @@ podman push $QUAY_URL/$QUAY_USER/ctf-web-to-system:1.1 --remove-signatures
 
 podman pull $QUAY_URL/$QUAY_USER/ctf-web-to-system:1.1
 roxctl image check --insecure-skip-tls-verify -e "$ROX_CENTRAL_ADDRESS:443"  --image=$QUAY_URL/$QUAY_USER/ctf-web-to-system:1.1
+
+
+
+
+
+# Build time Policy
+
+podman pull $QUAY_URL/$QUAY_USER/frontend:0.1
+
+roxctl --insecure-skip-tls-verify -e "$ROX_CENTRAL_ADDRESS:443" image check --image=$QUAY_URL/$QUAY_USER/frontend:0.1
+
+podman tag $QUAY_URL/$QUAY_USER/frontend:0.1 $QUAY_URL/$QUAY_USER/frontend:0.2
+
+podman push $QUAY_URL/$QUAY_USER/frontend:0.2 --remove-signatures
+
