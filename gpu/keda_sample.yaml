@@ -15,12 +15,10 @@ spec:
     spec:
       containers:
         - name: gpu-bench
-          image: 'nvcr.io/nvidia/k8s/cuda-sample:nbody-cuda11.2.1'
+          image: 'quay.io/openshift-psap/gpu-burn:latest'
           args:
-            - nbody
-            - '-gpu'
-            - '-benchmark'
-            - '-numbodies=2560000'
+            - gpu-burn
+            - '3600'
           resources:
             limits:
               nvidia.com/gpu: '1'
