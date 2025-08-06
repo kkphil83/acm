@@ -1,0 +1,52 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: gpu-bench
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: gpu-bench
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: gpu-bench
+    spec:
+      containers:
+        - name: gpu-bench
+          image: 'nvcr.io/nvidia/k8s/cuda-sample:nbody-cuda11.2.1'
+          args:
+            - nbody
+            - '-gpu'
+            - '-benchmark'
+            - '-numbodies=2560000'
+          resources:
+            limits:
+              nvidia.com/gpu: '1'
+      tolerations:
+        - key: nvidia.com/gpu
+          operator: Exists
+          effect: NoSchedule
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: gpu-scaledobject
+spec:
+  scaleTargetRef:
+    name: gpu-bench
+  minReplicaCount: 1
+  maxReplicaCount: 5
+  triggers:
+  - type: prometheus 
+    metadata:
+      serverAddress: https://thanos-querier.openshift-monitoring.svc.cluster.local:9092 
+      namespace: gpu
+      metricName: DCGM_FI_DEV_GPU_UTI
+      threshold: '5' 
+      query: sum(avg_over_time(DCGM_FI_DEV_GPU_UTIL{pod=~"gpu-bench.*"}[30s]))
+      authModes: basic 
+      ignoreNullValues: "false" 
+      unsafeSsl: "false" 
+
