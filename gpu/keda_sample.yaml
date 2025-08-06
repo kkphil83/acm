@@ -44,8 +44,8 @@ spec:
       serverAddress: https://thanos-querier.openshift-monitoring.svc.cluster.local:9092 
       namespace: gpu
       metricName: DCGM_FI_DEV_GPU_UTI
-      threshold: '85' 
-      query: sum(avg_over_time(DCGM_FI_DEV_GPU_UTIL{pod=~"gpu-bench.*"}[30s]))
+      threshold: '60' 
+      query: sum(avg_over_time(DCGM_FI_DEV_GPU_UTIL{exported_pod=~"gpu-bench.*"}[30s]))
       authModes: basic 
       ignoreNullValues: "false" 
       unsafeSsl: "false" 
