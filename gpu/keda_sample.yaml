@@ -2,6 +2,7 @@ kind: Deployment
 apiVersion: apps/v1
 metadata:
   name: gpu-bench
+  namespace: gpu
 spec:
   replicas: 0
   selector:
@@ -31,20 +32,22 @@ apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
   name: gpu-scaledobject
+  namespace: gpu
 spec:
   scaleTargetRef:
     name: gpu-bench
-  minReplicaCount: 1
   maxReplicaCount: 5
+  minReplicaCount: 1
+  pollingInterval: 10
   triggers:
-  - type: prometheus 
-    metadata:
-      serverAddress: https://thanos-querier.openshift-monitoring.svc.cluster.local:9092 
-      namespace: gpu
-      metricName: DCGM_FI_DEV_GPU_UTI
-      threshold: '60' 
-      query: sum(avg_over_time(DCGM_FI_DEV_GPU_UTIL{exported_pod=~"gpu-bench.*"}[30s]))
-      authModes: basic 
-      ignoreNullValues: "false" 
-      unsafeSsl: "false" 
-
+    - authenticationRef:
+        kind: ClusterTriggerAuthentication
+        name: keda-trigger-auth-prometheus
+      metadata:
+        authModes: bearer
+        metricName: DCGM_FI_DEV_GPU_UTI
+        namespace: nvidia-gpu-operator
+        query: 'sum(avg_over_time(DCGM_FI_DEV_GPU_UTIL{exported_pod=~"gpu-bench.*"}[30s]))'
+        serverAddress: 'https://thanos-querier.openshift-monitoring.svc.cluster.local:9092'
+        threshold: '30'
+      type: prometheus
