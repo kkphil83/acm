@@ -5,11 +5,11 @@ metadata:
 spec:
   namespaceSelector: {}
   queueingStrategy: BestEffortFIFO
-  cohort: team-ab
+  cohort: team-abc
   preemption:
     reclaimWithinCohort: Any
   fairSharing:
-    weight: 2
+    weight: 1
   resourceGroups:
   - coveredResources: 
     - cpu
@@ -18,7 +18,7 @@ spec:
     - name: "default-flavor"
       resources:
       - name: "cpu"
-        nominalQuota: 10
+        nominalQuota: 16
       - name: "memory"
         nominalQuota: 32Gi
   - coveredResources:
@@ -27,5 +27,5 @@ spec:
     - name: gpu-flavor
       resources:
       - name: nvidia.com/gpu
-        nominalQuota: "8"
+        nominalQuota: "3"
   
