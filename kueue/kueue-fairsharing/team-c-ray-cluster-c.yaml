@@ -47,7 +47,7 @@ spec:
     numOfHosts: 1
     rayStartParams:
       block: "true"
-      num-gpus: "2"
+      num-gpus: "1"
     replicas: 1
     scaleStrategy: {}
     template:

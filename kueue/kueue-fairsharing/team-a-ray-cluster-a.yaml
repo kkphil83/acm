@@ -42,13 +42,13 @@ spec:
   suspend: false
   workerGroupSpecs:
   - groupName: small-group-test
-    maxReplicas: 2
-    minReplicas: 2
+    maxReplicas: 3
+    minReplicas: 3
     numOfHosts: 1
     rayStartParams:
       block: "true"
-      num-gpus: "2"
-    replicas: 2
+      num-gpus: "1"
+    replicas: 3
     scaleStrategy: {}
     template:
       spec:
@@ -58,10 +58,10 @@ spec:
           imagePullPolicy: Always
           resources:
             limits:
-              cpu: "4"
-              memory: 8G
-              nvidia.com/gpu: "2"
+              cpu: "2"
+              memory: 4G
+              nvidia.com/gpu: "1"
             requests:
-              cpu: "4"
-              memory: 8G
-              nvidia.com/gpu: "2"
+              cpu: "2"
+              memory: 4G
+              nvidia.com/gpu: "1"

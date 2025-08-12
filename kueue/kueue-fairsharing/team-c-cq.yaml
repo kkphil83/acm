@@ -3,7 +3,9 @@ kind: ClusterQueue
 metadata:
   name: team-c-cq
 spec:
-  namespaceSelector: {}
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: team-c
   queueingStrategy: BestEffortFIFO
   cohort: team-abc
   preemption:

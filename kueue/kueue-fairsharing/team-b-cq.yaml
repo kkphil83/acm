@@ -3,7 +3,9 @@ kind: ClusterQueue
 metadata:
   name: team-b-cq
 spec:
-  namespaceSelector: {}
+  namespaceSelector:
+    matchLabels:
+      kubernetes.io/metadata.name: team-b
   queueingStrategy: BestEffortFIFO
   cohort: team-abc
   preemption:
@@ -27,5 +29,5 @@ spec:
     - name: gpu-flavor
       resources:
       - name: nvidia.com/gpu
-        nominalQuota: "3"
+        nominalQuota: "2"
   
