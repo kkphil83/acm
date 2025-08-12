@@ -42,13 +42,13 @@ spec:
   suspend: false
   workerGroupSpecs:
   - groupName: small-group-test
-    maxReplicas: 2
-    minReplicas: 2
+    maxReplicas: 3
+    minReplicas: 3
     numOfHosts: 1
     rayStartParams:
       block: "true"
       num-gpus: "2"
-    replicas: 2
+    replicas: 3
     scaleStrategy: {}
     template:
       spec:
