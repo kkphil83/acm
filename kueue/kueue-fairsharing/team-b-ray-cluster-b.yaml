@@ -1,12 +1,10 @@
-# Team B is using dev-priority
-# Total CPU: 6      
-# Total Mem: 16G 
+# Team A is using prod-priority and will prempt team A because shared-cq quota 
+# is CPU: 10 and mem: 64G which has no spare quota for team A (GPU:10, MEM:24G). 
 apiVersion: ray.io/v1
 kind: RayCluster
 metadata:
   labels:  
     kueue.x-k8s.io/queue-name: local-queue
-    kueue.x-k8s.io/priority-class: dev-priority
   name: raycluster-b
   namespace: team-b
 spec:
@@ -55,15 +53,15 @@ spec:
     template:
       spec:
         containers:
-          name: machine-learning
+        - name: machine-learning
           image: quay.io/project-codeflare/ray:latest-py39-cu118
           imagePullPolicy: Always
           resources:
             limits:
-              cpu: "2"
-              memory: 4G
-              nvidia.com/gpu: "1"
+              cpu: "4"
+              memory: 8G
+              nvidia.com/gpu: "2"
             requests:
-              cpu: "2"
-              memory: 4G
-              nvidia.com/gpu: "1"
+              cpu: "4"
+              memory: 8G
+              nvidia.com/gpu: "2"
