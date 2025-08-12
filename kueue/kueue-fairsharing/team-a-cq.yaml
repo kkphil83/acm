@@ -8,6 +8,8 @@ spec:
       kubernetes.io/metadata.name: team-a
   queueingStrategy: BestEffortFIFO
   cohort: team-ab
+  preemption:
+    reclaimWithinCohort: Any
   fairSharing:
     weight: 2
   resourceGroups:
