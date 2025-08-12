@@ -11,7 +11,7 @@ spec:
   preemption:
     reclaimWithinCohort: Any
   fairSharing:
-    weight: 2
+    weight: 3
   resourceGroups:
   - coveredResources: 
     - cpu
