@@ -42,7 +42,7 @@ spec:
   suspend: false
   workerGroupSpecs:
   - groupName: small-group-test
-    maxReplicas: 3
+    maxReplicas: 1
     minReplicas: 1
     numOfHosts: 1
     rayStartParams:
