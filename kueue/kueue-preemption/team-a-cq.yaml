@@ -16,6 +16,14 @@ spec:
   cohort: team-ab
   resourceGroups:
   - coveredResources:
+    - nvidia.com/gpu
+    flavors:
+    - name: gpu-flavor
+      resources:
+      - name: nvidia.com/gpu
+        nominalQuota: "0"
+        borrowingLimit: "0"
+  - coveredResources:
     - cpu
     - memory
     flavors:
@@ -25,11 +33,4 @@ spec:
         nominalQuota: 0
       - name: memory
         nominalQuota: 0
-  - coveredResources:
-    - nvidia.com/gpu
-    flavors:
-    - name: gpu-flavor
-      resources:
-      - name: nvidia.com/gpu
-        nominalQuota: "4"
   
