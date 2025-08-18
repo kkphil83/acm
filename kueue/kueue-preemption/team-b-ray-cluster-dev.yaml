@@ -16,7 +16,7 @@ spec:
     rayStartParams:
       block: "true"
       dashboard-host: 0.0.0.0
-      num-gpus: "1"    
+      num-gpus: "0"    
     template:
       metadata: {}
       spec:
