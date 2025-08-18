@@ -22,10 +22,3 @@ spec:
         nominalQuota: 10
       - name: "memory"
         nominalQuota: 64Gi
-  - coveredResources:
-    - nvidia.com/gpu
-    flavors:
-    - name: gpu-flavor
-      resources:
-      - name: nvidia.com/gpu
-        nominalQuota: "4"
