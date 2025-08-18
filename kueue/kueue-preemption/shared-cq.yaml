@@ -19,13 +19,13 @@ spec:
     - name: "default-flavor"
       resources:
       - name: "cpu"
-        nominalQuota: 0
+        nominalQuota: 20
       - name: "memory"
-        nominalQuota: 0
+        nominalQuota: 64
   - coveredResources:
     - nvidia.com/gpu
     flavors:
     - name: gpu-flavor
       resources:
       - name: nvidia.com/gpu
-        nominalQuota: 0
+        nominalQuota: 4
