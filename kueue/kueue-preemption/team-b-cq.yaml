@@ -15,8 +15,7 @@ spec:
     - name: gpu-flavor
       resources:
       - name: nvidia.com/gpu
-        nominalQuota: "0"
-        borrowingLimit: "2"
+        nominalQuota: 2
   - coveredResources:
     - cpu
     - memory
