@@ -16,7 +16,7 @@ spec:
     rayStartParams:
       block: "true"
       dashboard-host: 0.0.0.0
-      num-gpus: "0"    
+      num-gpus: "2"    
     template:
       metadata: {}
       spec:
@@ -44,13 +44,13 @@ spec:
   suspend: false
   workerGroupSpecs:
   - groupName: small-group-test
-    maxReplicas: 2
-    minReplicas: 2
+    maxReplicas: 1
+    minReplicas: 1
     numOfHosts: 1
     rayStartParams:
       block: "true"
-      num-gpus: "0"
-    replicas: 2
+      num-gpus: "2"
+    replicas: 1
     scaleStrategy: {}
     template:
       spec:
@@ -65,8 +65,8 @@ spec:
             limits:
               cpu: "2"
               memory: 4G
-              nvidia.com/gpu: "1"
+              nvidia.com/gpu: "2"
             requests:
               cpu: "2"
               memory: 4G
-              nvidia.com/gpu: "1"
+              nvidia.com/gpu: "2"
