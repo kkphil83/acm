@@ -10,6 +10,13 @@ spec:
   cohort: team-ab
   resourceGroups:
   - coveredResources:
+    - nvidia.com/gpu
+    flavors:
+    - name: gpu-flavor
+      resources:
+      - name: nvidia.com/gpu
+        nominalQuota: 4
+  - coveredResources:
     - cpu
     - memory
     flavors:
