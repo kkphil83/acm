@@ -1,0 +1,11 @@
+FROM quay.io/modh/odh-workbench-jupyter-datascience-cpu-py311-ubi9@sha256:ad69fba3040573c181000d193095cde448b3a54610b4c23f6b374f8f6d33b632
+
+COPY requirements.txt ./
+
+RUN echo "Installing softwares and packages" && \
+    pip install micropipenv && \
+    micropipenv install && \
+    rm -f ./requirements.txt
+
+RUN chmod -R g+w /opt/app-root/lib/python3.11/site-packages && \
+    fix-permissions /opt/app-root -P

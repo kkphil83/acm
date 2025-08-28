@@ -1,0 +1,66 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+    openshift.io/display-name: Qwen3-14B-base
+    prometheus.io/path: /metrics
+    prometheus.io/port: '8080'
+  name: qwen3-14b-base-vllm
+  namespace: demo-project
+  labels:
+    app: qwen3-14b-base-vllm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qwen3-14b-base-vllm
+  template:
+    metadata:
+      name: qwen3-14b-base-vllm
+      namespace: demo-project
+      labels:
+        app: qwen3-14b-base-vllm
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: '24'
+              memory: 64Gi
+              nvidia.com/gpu: '1'
+            requests:
+              cpu: '12'
+              memory: 32Gi
+              nvidia.com/gpu: '1'
+          readinessProbe:
+            tcpSocket:
+              port: 8080
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: kserve-container
+          command:
+            - python
+            - '-m'
+            - vllm.entrypoints.openai.api_server
+          env:
+            - name: HF_HOME
+              value: /tmp/hf_home
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: IfNotPresent
+          terminationMessagePolicy: File
+          image: 'quay.io/modh/vllm:rhoai-2.24-cuda'
+          args:
+            - '--port=8080'
+            - '--model=/mnt/models'
+            - '--served-model-name=qwen3-14b-base'
+            - '--gpu-memory-utilization=0.85'
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      automountServiceAccountToken: false
+      securityContext: {}
+      schedulerName: default-scheduler
