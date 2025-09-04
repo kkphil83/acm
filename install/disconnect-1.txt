@@ -1,0 +1,30 @@
+
+# jump 서버에서 다운로드 및 구성
+
+
+cd /mnt/low-side-data/
+curl -L -o oc-mirror.tar.gz https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.19.9/oc-mirror.tar.gz
+tar -xzf oc-mirror.tar.gz
+rm -f oc-mirror.tar.gz
+chmod +x oc-mirror
+sudo cp -v oc-mirror /bin
+
+
+curl -L -o mirror-registry.tar.gz https://mirror.openshift.com/pub/cgw/mirror-registry/latest/mirror-registry-amd64.tar.gz
+
+
+
+curl -L -o openshift-install.tar.gz https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.19.9/openshift-install-linux.tar.gz
+tar -xzf openshift-install.tar.gz openshift-install
+rm -f openshift-install.tar.gz
+
+
+
+curl -L -o oc.tar.gz https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.19.9/openshift-client-linux.tar.gz
+tar -xzf oc.tar.gz oc
+rm -f oc.tar.gz
+sudo cp -v oc /bin
+
+ls -1 /mnt/low-side-data/
+
+

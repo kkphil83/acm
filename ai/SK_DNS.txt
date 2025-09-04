@@ -1,0 +1,4 @@
+
+team-a-wb-team-a.apps.ai-ocp.skt.local
+team-b-wb-team-b.apps.ai-ocp.skt.local
+

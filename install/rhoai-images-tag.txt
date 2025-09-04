@@ -1,0 +1,159 @@
+
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-codeserver-datascience-cpu-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-datascience-cpu-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-minimal-cpu-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-minimal-cuda-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-minimal-rocm-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-pytorch-cuda-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-pytorch-rocm-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-tensorflow-cuda-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-tensorflow-rocm-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-trustyai-cpu-py311-ubi9/tags/list
+
+
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-codeserver-datascience-cpu-py311-ubi9/tags/list
+{"name":"modh/odh-workbench-codeserver-datascience-cpu-py311-ubi9","tags":["sha256-78747c7a4fbc911e7af20189f999a46ee5969fb9796e24dc1ebd6c2a9918182d"]}
+
+registry.ocp.skt.local:5019/modh/odh-workbench-codeserver-datascience-cpu-py311-ubi9@sha256:78747c7a4fbc911e7af20189f999a46ee5969fb9796e24dc1ebd6c2a9918182d
+
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-datascience-cpu-py311-ubi9/tags/list
+{"name":"modh/odh-workbench-jupyter-datascience-cpu-py311-ubi9","tags":["sha256-ad69fba3040573c181000d193095cde448b3a54610b4c23f6b374f8f6d33b632"]}
+
+registry.ocp.skt.local:5019/modh/odh-workbench-jupyter-datascience-cpu-py311-ubi9@sha256:ad69fba3040573c181000d193095cde448b3a54610b4c23f6b374f8f6d33b632
+
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-minimal-cpu-py311-ubi9/tags/list
+{"name":"modh/odh-workbench-jupyter-minimal-cpu-py311-ubi9","tags":["sha256-0ea737f6c626d5d01b44fc8c6537a193ad45c378aed9ff98b209968dff418075"]}
+
+registry.ocp.skt.local:5019/modh/odh-workbench-jupyter-minimal-cpu-py311-ubi9@sha256:0ea737f6c626d5d01b44fc8c6537a193ad45c378aed9ff98b209968dff418075
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-minimal-cuda-py311-ubi9/tags/list
+{"name":"modh/odh-workbench-jupyter-minimal-cuda-py311-ubi9","tags":["sha256-d847689c1e6e856e61d38cbdd4843714898e4625bf2600230e7341e9181f5cc9"]}
+
+registry.ocp.skt.local:5019/modh/odh-workbench-jupyter-minimal-cuda-py311-ubi9@sha256:d847689c1e6e856e61d38cbdd4843714898e4625bf2600230e7341e9181f5cc9
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-minimal-rocm-py311-ubi9/tags/list
+{"name":"modh/odh-workbench-jupyter-minimal-rocm-py311-ubi9","tags":["sha256-7abb21179922a946440f57ea4ec70194a9211eb5a5ce6045fa77163631140c44"]}
+
+registry.ocp.skt.local:5019/modh/odh-workbench-jupyter-minimal-rocm-py311-ubi9@sha256:7abb21179922a946440f57ea4ec70194a9211eb5a5ce6045fa77163631140c44
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-pytorch-cuda-py311-ubi9/tags/list
+{"name":"modh/odh-workbench-jupyter-pytorch-cuda-py311-ubi9","tags":["sha256-210a270aed593c82c83ab8c3d9dbd9f8a9b46df7ff8be48fb0490f156ed06dca"]}
+
+registry.ocp.skt.local:5019/modh/odh-workbench-jupyter-pytorch-cuda-py311-ubi9@sha256:210a270aed593c82c83ab8c3d9dbd9f8a9b46df7ff8be48fb0490f156ed06dca
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-pytorch-rocm-py311-ubi9/tags/list
+{"name":"modh/odh-workbench-jupyter-pytorch-rocm-py311-ubi9","tags":["sha256-172eea5cdddb4fcf1d7f5ba27ae55583d7f72e833409e430029caab8da0e4666"]}
+
+registry.ocp.skt.local:5019/modh/odh-workbench-jupyter-pytorch-rocm-py311-ubi9@sha256:172eea5cdddb4fcf1d7f5ba27ae55583d7f72e833409e430029caab8da0e4666
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-tensorflow-cuda-py311-ubi9/tags/list
+{"name":"modh/odh-workbench-jupyter-tensorflow-cuda-py311-ubi9","tags":["sha256-ab15a7d05da8d7b388bad345fa7172d03fa052fed12a3cff94c667308cea0845"]}
+
+registry.ocp.skt.local:5019/modh/odh-workbench-jupyter-tensorflow-cuda-py311-ubi9@sha256:ab15a7d05da8d7b388bad345fa7172d03fa052fed12a3cff94c667308cea0845
+
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-tensorflow-rocm-py311-ubi9/tags/list
+{"name":"modh/odh-workbench-jupyter-tensorflow-rocm-py311-ubi9","tags":["sha256-57699afb1f3e162e8fd7bebf928ceca428f68fe84f579f5181e16c67d19ce156"]}
+
+registry.ocp.skt.local:5019/modh/odh-workbench-jupyter-tensorflow-rocm-py311-ubi9@sha256:57699afb1f3e162e8fd7bebf928ceca428f68fe84f579f5181e16c67d19ce156
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-workbench-jupyter-trustyai-cpu-py311-ubi9/tags/list
+{"name":"modh/odh-workbench-jupyter-trustyai-cpu-py311-ubi9","tags":["sha256-37e4223e75a0ddaf2e2381189d6237d7e0917670a0bdc2a363b250df9f40be5d"]}
+
+registry.ocp.skt.local:5019/modh/odh-workbench-jupyter-trustyai-cpu-py311-ubi9@sha256:37e4223e75a0ddaf2e2381189d6237d7e0917670a0bdc2a363b250df9f40be5d
+
+
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-datascience-cpu-py311-ubi9/tags/list
+{"name":"modh/odh-pipeline-runtime-datascience-cpu-py311-ubi9","tags":["sha256-00dbb78af70bf9bcfb15dad7ae5a1a90e47ac33efbd6573a090cf56531e22ffb"]}
+
+registry.ocp.skt.local:5019/modh/odh-pipeline-runtime-datascience-cpu-py311-ubi9@sha256:00dbb78af70bf9bcfb15dad7ae5a1a90e47ac33efbd6573a090cf56531e22ffb
+
+
+
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-minimal-cpu-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-pytorch-cuda-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-pytorch-rocm-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-tensorflow-cuda-py311-ubi9/tags/list
+curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-tensorflow-rocm-py311-ubi9/tags/list
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-minimal-cpu-py311-ubi9/tags/list
+{"name":"modh/odh-pipeline-runtime-minimal-cpu-py311-ubi9","tags":["sha256-23372eb8b753bcbd3b6b60cddcb9e459da96e52a458c6d2e99b364fd325478c1"]}
+
+registry.ocp.skt.local:5019/modh/odh-pipeline-runtime-minimal-cpu-py311-ubi9@sha256:23372eb8b753bcbd3b6b60cddcb9e459da96e52a458c6d2e99b364fd325478c1
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-pytorch-cuda-py311-ubi9/tags/list
+{"name":"modh/odh-pipeline-runtime-pytorch-cuda-py311-ubi9","tags":["sha256-26fcc1b6436afdfd36c0781bae7da8f3e017b1798c88e33aad3cf9a4bd834528"]}
+
+registry.ocp.skt.local:5019/modh/odh-pipeline-runtime-pytorch-cuda-py311-ubi9@sha256:26fcc1b6436afdfd36c0781bae7da8f3e017b1798c88e33aad3cf9a4bd834528
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-pytorch-rocm-py311-ubi9/tags/list
+{"name":"modh/odh-pipeline-runtime-pytorch-rocm-py311-ubi9","tags":["sha256-588f068744f0d4dc6e9b223591ceb4bb6e9adb631e1dfe894df5641b56e82b4b"]}
+
+registry.ocp.skt.local:5019/modh/odh-pipeline-runtime-pytorch-rocm-py311-ubi9@sha256:588f068744f0d4dc6e9b223591ceb4bb6e9adb631e1dfe894df5641b56e82b4b
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-tensorflow-cuda-py311-ubi9/tags/list
+{"name":"modh/odh-pipeline-runtime-tensorflow-cuda-py311-ubi9","tags":["sha256-1cf03aec67cb6bc0e95450c6007fab2e6f5b6bcb0372c52be925bd11333cc598"]}
+
+registry.ocp.skt.local:5019/modh/odh-pipeline-runtime-tensorflow-cuda-py311-ubi9@sha256:1cf03aec67cb6bc0e95450c6007fab2e6f5b6bcb0372c52be925bd11333cc598
+
+[core@bdsp-tb2-ocp-repo01 ~]$ curl -u admin:'Skt!#@234' https://registry.ocp.skt.local:5019/v2/modh/odh-pipeline-runtime-tensorflow-rocm-py311-ubi9/tags/list
+{"name":"modh/odh-pipeline-runtime-tensorflow-rocm-py311-ubi9","tags":["sha256-748609ff3a8897e3bcfe909775ed2f4cf310601d9646e8b71e27471fc8f58c9c"]}
+
+registry.ocp.skt.local:5019/modh/odh-pipeline-runtime-tensorflow-rocm-py311-ubi9@sha256:748609ff3a8897e3bcfe909775ed2f4cf310601d9646e8b71e27471fc8f58c9c
+
+
+
+quay.io/modh/odh-workbench-jupyter-datascience-cpu-py311-ubi9@sha256:ad69fba3040573c181000d193095cde448b3a54610b4c23f6b374f8f6d33b632
+quay.io/modh/odh-workbench-jupyter-datascience-cpu-py311-ubi9@sha256:ad69fba3040573c181000d193095cde448b3a54610b4c23f6b374f8f6d33b632
+
+
+skopeo copy  --dest-creds admin:'Skt!#@234' docker-archive:./ray.tar docker://registry.ocp.skt.local:5019/ai-poc2/ray:latest-py39-cu118
+
+
+skopeo copy docker://quay.io/modh/odh-workbench-jupyter-datascience-cpu-py311-ubi9@sha256:ad69fba3040573c181000d193095cde448b3a54610b4c23f6b374f8f6d33b632  docker-archive:./odh-workbench-jupyter-datascience-cpu-py311-ubi9.tar 
+
+skopeo copy --all --dest-tls-verify=false --dest-creds admin:'Skt!#@234' docker-archive:./odh-workbench-jupyter-datascience-cpu-py311-ubi9.tar   docker://registry.ocp.skt.local:5019/ai-poc2/odh-workbench-jupyter-datascience-cpu-py311-ubi9@sha256:ad69fba3040573c181000d193095cde448b3a54610b4c23f6b374f8f6d33b632
+
+
+
+
+    - name: '2025.1'
+      annotations:
+        opendatahub.io/notebook-build-commit: '2e70684'
+        opendatahub.io/notebook-python-dependencies: |
+          [
+            {"name": "JupyterLab","version": "4.2"},
+            {"name": "Boto3", "version": "1.37"},
+            {"name": "Kafka-Python-ng", "version": "2.2"},
+            {"name": "Kfp", "version": "2.12"},
+            {"name": "Matplotlib", "version": "3.10"},
+            {"name": "Numpy", "version": "2.2"},
+            {"name": "Pandas", "version": "2.2"},
+            {"name": "Scikit-learn", "version": "1.6"},
+            {"name": "Scipy", "version": "1.15"},
+            {"name": "Odh-Elyra", "version": "4.2"},
+            {"name": "PyMongo", "version": "4.11"},
+            {"name": "Pyodbc", "version": "5.2"},
+            {"name": "Codeflare-SDK", "version": "0.29"},
+            {"name": "Sklearn-onnx", "version": "1.18"},
+            {"name": "Psycopg", "version": "3.2"},
+            {"name": "MySQL Connector/Python", "version": "9.2"},
+            {"name": "Kubeflow-Training", "version": "1.9"}
+          ]
+        opendatahub.io/notebook-software: |
+          [
+            {"name": "Python", "version": "v3.11"}
+          ]
+        opendatahub.io/workbench-image-recommended: 'true'
+        openshift.io/imported-from: quay.io/modh/odh-generic-data-science-notebook
+      from:
+        kind: DockerImage
+        name: 'registry.ocp.skt.local:5019/modh/odh-workbench-jupyter-datascience-cpu-py311-ubi9@sha256:ad69fba3040573c181000d193095cde448b3a54610b4c23f6b374f8f6d33b632'
+      generation: 15
+      importPolicy:
+        importMode: Legacy
+      referencePolicy:
+        type: Source
